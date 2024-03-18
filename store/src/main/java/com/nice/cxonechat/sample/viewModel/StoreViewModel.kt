@@ -152,8 +152,11 @@ class StoreViewModel(
      *  * otherwise make sure we have a valid user name.
      */
     private fun onConnected() = scope("onConnected") {
+        debug("onConnected called")
         val settings = chatSettingsRepository.settings.value
+        debug("Settings values: $settings")
         val isAuthorizationEnabled = chatProvider.chat?.configuration?.isAuthorizationEnabled
+        debug("isAuthorizationEnabled: $isAuthorizationEnabled")
         val state = currentUiState(this, settings, isAuthorizationEnabled) ?: return@scope
         val currentState = uiState.value
         if (!(state == Prepared && (currentState is UiSettings || currentState is Configuration))) {
@@ -174,6 +177,7 @@ class StoreViewModel(
         true -> if (settings?.authorization != null) {
             Prepared
         } else {
+            debug("authorization enabled, calling OAuth")
             OAuth
         }
 
@@ -213,6 +217,7 @@ class StoreViewModel(
          * Send a pending page view if chat is just now established.
          */
         override fun onChatStateChanged(chatState: ChatState) {
+            debug("onChatStateChanged: $chatState")
             // If the chat has now connected, see if we need to send authorization
             when (chatState) {
                 ChatState.INITIAL -> setUiState(Configuration(this@StoreViewModel))

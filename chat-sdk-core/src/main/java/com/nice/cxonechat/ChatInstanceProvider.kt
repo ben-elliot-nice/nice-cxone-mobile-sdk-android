@@ -28,6 +28,7 @@ import com.nice.cxonechat.exceptions.RuntimeChatException
 import com.nice.cxonechat.log.Logger
 import com.nice.cxonechat.log.LoggerNoop
 import com.nice.cxonechat.log.LoggerScope
+import com.nice.cxonechat.log.debug
 import com.nice.cxonechat.log.scope
 import com.nice.cxonechat.log.warning
 import com.nice.cxonechat.state.containsField
@@ -234,6 +235,11 @@ class ChatInstanceProvider private constructor(
             "ChatInstanceProvider called with no valid configuration.  Insure the ChatInstanceProvider is " +
                     "properly configured before calling prepare."
         )
+
+        debug("configuration state: $configuration")
+        debug("Authorization state: $authorization")
+        debug("userName state: $userName")
+        debug("deviceTokenProvider state: $deviceTokenProvider")
 
         chatBuilderProvider(context, configuration, logger)
             .setChatStateListener(this@ChatInstanceProvider)

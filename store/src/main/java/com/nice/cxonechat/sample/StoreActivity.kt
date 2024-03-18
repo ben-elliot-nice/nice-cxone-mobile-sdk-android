@@ -176,6 +176,11 @@ class StoreActivity : ComponentActivity(), UiStateContext {
         )
     }
 
+    override fun loginCustom() = logger.scope("loginCustom") {
+        debug("Adding consumer auth to storeViewModel")
+        storeViewModel.chatSettingsHandler.setAuthorization(ChatAuthorization("sadfkjlhasdlfkjhasdfsdf", "asldjkfasasdfasdfasdf"))
+    }
+
     private inner class LoggingAuthorizeListener(
         private val codeVerifier: String,
         logger: Logger,
