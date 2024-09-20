@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 package com.nice.cxonechat.internal
 
 import com.nice.cxonechat.Cancellable
+import com.nice.cxonechat.ChatMode.LiveChat
+import com.nice.cxonechat.ChatMode.MultiThread
+import com.nice.cxonechat.ChatMode.SingleThread
 import com.nice.cxonechat.ChatThreadHandler
 import com.nice.cxonechat.ChatThreadsHandler
-import com.nice.cxonechat.enums.EventType
-import com.nice.cxonechat.enums.EventType.ThreadListFetched
-import com.nice.cxonechat.event.FetchThreadEvent
 import com.nice.cxonechat.internal.model.ChatThreadInternal
 import com.nice.cxonechat.internal.model.ChatThreadMutable
 import com.nice.cxonechat.internal.model.ChatThreadMutable.Companion.asMutable
@@ -38,16 +38,14 @@ import com.nice.cxonechat.state.checkRequired
 import com.nice.cxonechat.state.validate
 import com.nice.cxonechat.thread.ChatThread
 import com.nice.cxonechat.thread.ChatThreadState.Pending
-import java.util.UUID
+import com.nice.cxonechat.util.UUIDProvider
 
 internal class ChatThreadsHandlerImpl(
     private val chat: ChatWithParameters,
     override val preChatSurvey: PreChatSurvey?,
 ) : ChatThreadsHandler {
 
-    override fun refresh() {
-        chat.events().trigger(FetchThreadEvent)
-    }
+    override fun refresh() = Unit
 
     override fun create(
         customFields: Map<String, String>,
@@ -63,7 +61,7 @@ internal class ChatThreadsHandlerImpl(
             checkRequired(combinedCustomFieldMap)
         }
 
-        val uuid = UUID.randomUUID()
+        val uuid = UUIDProvider.next()
         val thread = ChatThreadInternal(
             id = uuid,
             fields = combinedCustomFieldMap.map(::CustomFieldInternal),
@@ -74,15 +72,20 @@ internal class ChatThreadsHandlerImpl(
 
     override fun threads(listener: ChatThreadsHandler.OnThreadsUpdatedListener): Cancellable {
         var threads: List<ChatThreadMutable> = emptyList()
-        val threadListFetched = chat.socketListener.addCallback<EventThreadListFetched>(ThreadListFetched) { event ->
+        val threadListFetched = chat.socketListener.addCallback(EventThreadListFetched) { event ->
             threads = event.threads.map { threadData -> threadData.toChatThread().asMutable() }
             listener.onThreadsUpdated(threads)
         }
-        val threadArchived = chat.socketListener.addCallback<EventCaseStatusChanged>(EventType.CaseStatusChanged) { event ->
+        if (chat.chatMode === SingleThread) {
+            return threadListFetched
+        }
+        val threadArchived = chat.socketListener.addCallback(EventCaseStatusChanged) { event ->
             threads.asSequence()
                 .filter(event::inThread)
                 .forEach { thread ->
-                    CaseStatusChangedHandlerActions.handleCaseClosed(thread, event) { listener.onThreadsUpdated(threads) }
+                    CaseStatusChangedHandlerActions.handleCaseClosed(thread, event) { _ ->
+                        listener.onThreadsUpdated(threads)
+                    }
                 }
         }
 
@@ -92,23 +95,28 @@ internal class ChatThreadsHandlerImpl(
         )
     }
 
-    override fun thread(thread: ChatThread): ChatThreadHandler = createHandler(ChatThreadMutable.from(thread))
+    override fun thread(thread: ChatThread): ChatThreadHandler = createHandler(thread)
 
     // ---
 
     private fun createHandler(
         thread: ChatThread,
-        addWelcomeHandler: Boolean = false,
+        isThreadCreated: Boolean = false,
     ): ChatThreadHandler {
         val mutableThread = thread as? ChatThreadMutable ?: ChatThreadMutable.from(thread)
         var handler: ChatThreadHandler
         handler = ChatThreadHandlerImpl(chat, mutableThread)
+        if (chat.chatMode === MultiThread) {
+            handler = ChatThreadHandlerMulti(chat, mutableThread, handler)
+        }
         handler = ChatThreadHandlerMetadata(handler, chat, mutableThread)
         handler = ChatThreadHandlerMessages(handler, chat, mutableThread)
         handler = ChatThreadHandlerAgentUpdate(handler, chat, mutableThread)
         handler = ChatThreadHandlerAgentTyping(handler, chat)
         handler = ChatThreadHandlerMessageReadByAgent(handler, chat, mutableThread)
-        if (addWelcomeHandler) handler = ChatThreadHandlerWelcome(handler, chat, mutableThread)
+        if (chat.chatMode === LiveChat) handler = ChatThreadHandlerLiveChat(handler, chat, mutableThread, isThreadCreated)
+        if (isThreadCreated) handler = ChatThreadHandlerWelcome(handler, chat, mutableThread)
+        handler = ChatThreadHandlerAggregatingListener(handler)
         return handler
     }
 

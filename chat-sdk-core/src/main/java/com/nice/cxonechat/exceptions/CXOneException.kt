@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ sealed class CXOneException : Exception {
  * Some examples of invalid states might be:
  * * calling [ChatInstanceProvider.connect] on an unprepared provider;
  * * calling [ChatInstanceProvider.prepare] on a prepared or connected provider;
+ * * calling [ChatThreadHandler.endContact] on a channel that is not set to Live Chat.
  *
  * Further details are available in the exception description.
  */
@@ -94,8 +95,8 @@ class MissingPreChatCustomFieldsException internal constructor(
 )
 
 /**
- * A custom value passed to [com.nice.cxonechat.ChatFieldHandler.add] or
- * [com.nice.cxonechat.ChatThreadsHandler.create] has an invalid format.
+ * A custom value passed to
+ * [com.nice.cxonechat.ChatThreadsHandler.create] pre-chat survey has an invalid format.
  */
 @Public
 class InvalidCustomFieldValue internal constructor(
@@ -106,7 +107,8 @@ class InvalidCustomFieldValue internal constructor(
 )
 
 /**
- * A custom value passed to [ChatFieldHandler.add] or [ChatThreadsHandler.create] for an invalid (ie., missing) field.
+ * A custom value passed to
+ * [com.nice.cxonechat.ChatThreadsHandler.create] for an invalid (ie., missing) pre-chat survey field.
  */
 @Public
 class UndefinedCustomField internal constructor(

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ internal interface ValueStorage {
      * Persisted deviceToken.
      * Default value is empty string.
      */
-    var deviceToken: String
+    var deviceToken: String?
 
     fun clearStorage()
 }

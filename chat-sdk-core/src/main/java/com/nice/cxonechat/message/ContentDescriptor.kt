@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,11 @@
 package com.nice.cxonechat.message
 
 import android.content.Context
+import androidx.annotation.WorkerThread
 import com.nice.cxonechat.Public
 import com.nice.cxonechat.internal.model.ContentDescriptorInternal
+import com.nice.cxonechat.message.ContentDescriptor.DataSource.Bytes
+import com.nice.cxonechat.message.ContentDescriptor.DataSource.Uri
 
 /**
  * Container class for upload of attachment to backend.
@@ -147,10 +150,22 @@ interface ContentDescriptor {
             fileName: String,
             friendlyName: String?
         ): ContentDescriptor = ContentDescriptorInternal(
-            content = DataSource.Bytes(content),
+            content = Bytes(content),
             mimeType = mimeType,
             fileName = fileName,
             friendlyName = friendlyName
         )
+
+        @WorkerThread
+        internal fun ContentDescriptor.size(): Long? = when (val content = this.content) {
+            is Bytes ->
+                content.bytes.size.toLong()
+            is Uri ->
+                content
+                .context
+                .contentResolver
+                .openFileDescriptor(content.uri, "r")
+                ?.use { it.statSize }
+        }
     }
 }

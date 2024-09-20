@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import com.nice.cxonechat.message.Attachment
 import com.nice.cxonechat.message.MessageDirection.ToClient
 import com.nice.cxonechat.ui.R.string
 import com.nice.cxonechat.ui.composable.conversation.model.Message.WithAttachments
+import com.nice.cxonechat.ui.composable.conversation.model.PreviewMessageProvider
 import com.nice.cxonechat.ui.composable.theme.ChatTheme
 import com.nice.cxonechat.ui.composable.theme.ChatTheme.space
 import com.nice.cxonechat.ui.composable.theme.SelectionFrame
@@ -160,7 +161,7 @@ private fun PreviewAttachmentMessage(
     @PreviewParameter(CountProvider::class) count: Int
 ) {
     val message = WithAttachments(
-        message = previewTextMessage(
+        message = PreviewMessageProvider.Text(
             "Preview video",
             direction = ToClient,
             attachments = PreviewAttachments.with(count)

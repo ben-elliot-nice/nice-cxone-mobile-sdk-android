@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,13 @@ enum class ChatMode {
     /**
      * Chat is single-threaded.
      *
-     * Creating and archiving threads is not allowed.  The single thread will be automatically
-     * created if necessary.
+     * Creating and archiving threads is not allowed.
      */
-    SINGLE_THREAD,
+    SingleThread,
 
     /** Chat is multi-threaded. */
-    MULTI_THREAD,
+    MultiThread,
+
+    /** Chat is live chat. */
+    LiveChat,
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ internal data class ChatThreadCopy(
     override val threadAgent: Agent?,
     override val threadName: String?,
     override val threadState: ChatThreadState,
+    override val positionInQueue: Int?,
+    override val hasOnlineAgent: Boolean,
 ) : ChatThread() {
     companion object {
         @Suppress("LongParameterList")
@@ -46,6 +48,8 @@ internal data class ChatThreadCopy(
             threadAgent: Agent? = this.threadAgent,
             threadName: String? = this.threadName,
             threadState: ChatThreadState = this.threadState,
+            positionInQueue: Int? = this.positionInQueue,
+            hasOnlineAgent: Boolean = this.hasOnlineAgent,
         ): ChatThreadCopy = ChatThreadCopy(
             canAddMoreMessages = canAddMoreMessages,
             fields = fields,
@@ -55,6 +59,8 @@ internal data class ChatThreadCopy(
             threadAgent = threadAgent,
             threadName = threadName,
             threadState = threadState,
+            positionInQueue = positionInQueue,
+            hasOnlineAgent = hasOnlineAgent,
         )
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.nice.cxonechat.ui.composable.conversation.model.Action
 import com.nice.cxonechat.ui.composable.conversation.model.Action.ReplyButton
+import com.nice.cxonechat.ui.composable.conversation.model.PreviewMessageProvider
 import com.nice.cxonechat.ui.composable.theme.ChatTheme
 import com.nice.cxonechat.ui.composable.theme.ChatTheme.chatColors
 
@@ -61,15 +62,15 @@ internal fun ChipGroup(
 }
 
 private val actions = listOf(
-    ReplyButton(
-        action = PreviewReplyButton("Some text"),
-        sendMessage = { }
-    ),
-    ReplyButton(
-        action = PreviewReplyButton("Random cat", "https://http.cat/203"),
-        sendMessage = { }
+        ReplyButton(
+            action = PreviewMessageProvider.ReplyButton("Some text"),
+            sendMessage = { }
+        ),
+        ReplyButton(
+            action = PreviewMessageProvider.ReplyButton("Random cat", "https://http.cat/203"),
+            sendMessage = { }
+        )
     )
-)
 
 @Preview
 @Composable

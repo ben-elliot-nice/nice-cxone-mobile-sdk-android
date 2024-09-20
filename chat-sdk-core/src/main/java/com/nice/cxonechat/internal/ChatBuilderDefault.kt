@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,14 @@ import com.nice.cxonechat.Cancellable
 import com.nice.cxonechat.ChatBuilder
 import com.nice.cxonechat.ChatBuilder.OnChatBuiltCallback
 import com.nice.cxonechat.ChatBuilder.OnChatBuiltResultCallback
-import com.nice.cxonechat.ChatMode.MULTI_THREAD
-import com.nice.cxonechat.ChatMode.SINGLE_THREAD
+import com.nice.cxonechat.ChatMode.LiveChat
+import com.nice.cxonechat.ChatMode.MultiThread
+import com.nice.cxonechat.ChatMode.SingleThread
 import com.nice.cxonechat.ChatStateListener
 import com.nice.cxonechat.ChatThreadingImpl
 import com.nice.cxonechat.internal.copy.ConnectionCopyable.Companion.asCopyable
 import com.nice.cxonechat.internal.model.ChannelConfiguration
 import com.nice.cxonechat.internal.socket.SocketFactory
-import com.nice.cxonechat.internal.socket.StateReportingSocketFactory
 import com.nice.cxonechat.state.Connection
 import retrofit2.Call
 import retrofit2.Callback
@@ -44,6 +44,7 @@ internal class ChatBuilderDefault(
     private var lastName: String? = null
     private var chatStateListener: ChatStateListener? = null
     private var deviceToken: String? = null
+    private var customerId: String? = null
 
     override fun setAuthorization(authorization: Authorization) = apply {
         this.authorization = authorization
@@ -64,6 +65,10 @@ internal class ChatBuilderDefault(
 
     override fun setDeviceToken(token: String): ChatBuilder = apply {
         deviceToken = token
+    }
+
+    override fun setCustomerId(customerId: String): ChatBuilder = apply {
+        this.customerId = customerId
     }
 
     @Deprecated(
@@ -87,8 +92,14 @@ internal class ChatBuilderDefault(
     }
 
     private fun prepareChatParameters(): ChatParameters {
-        val socketFactory = chatStateListener?.let { StateReportingSocketFactory(it, factory) } ?: factory
-        var connection = socketFactory.getConfiguration(entrails.storage)
+        customerId?.let { id ->
+            val currentId = entrails.storage.customerId
+            if (currentId != id) {
+                if (currentId != null) entrails.storage.clearStorage()
+                entrails.storage.customerId = id
+            }
+        }
+        var connection = factory.getConfiguration(entrails.storage)
         val firstName = firstName
         val lastName = lastName
         if (firstName != null && lastName != null) {
@@ -102,7 +113,7 @@ internal class ChatBuilderDefault(
         check(response.isSuccessful) { "Response from the server was not successful" }
         val body = checkNotNull(response.body()) { "Response body was null" }
         val storeVisitorCallback = if (isDevelopment) StoreVisitorCallback(entrails.logger) else IgnoredCallback
-        return ChatParameters(connection, socketFactory, body, storeVisitorCallback)
+        return ChatParameters(connection, factory, body, storeVisitorCallback)
     }
 
     private fun createChatInstance(
@@ -118,15 +129,18 @@ internal class ChatBuilderDefault(
             callback = storeVisitorCallback,
             chatStateListener = chatStateListener
         )
-        chat = ChatMemoizeThreadsHandler(chat)
+        chat = ChatS3Events(chat)
         chat = ChatAuthorization(chat, authorization)
         chat = ChatStoreVisitor(chat, storeVisitorCallback)
         chat = ChatWelcomeMessageUpdate(chat)
         chat = ChatServerErrorReporting(chat)
+        chat = ChatMemoizeThreadsHandler(chat)
         chat = when (chat.chatMode) {
-            SINGLE_THREAD -> ChatSingleThread(chat)
-            MULTI_THREAD -> ChatMultiThread(chat)
+            SingleThread -> ChatSingleThread(chat)
+            MultiThread -> ChatMultiThread(chat)
+            LiveChat -> ChatLiveChat(chat)
         }
+        chat = ChatMemoizeThreadsHandler(chat)
         chat = ChatThreadingImpl(chat)
         if (isDevelopment) chat = ChatLogging(chat)
         return chat

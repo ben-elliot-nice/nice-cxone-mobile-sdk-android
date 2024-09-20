@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,15 @@ interface ChatThreadHandler {
     fun refresh()
 
     /**
+     * Requests that the server archive this thread.
+     *
+     * @param onComplete Callback to be performed when the request has completed.
+     * This routine will be invoked with a success value indicating whether or
+     * not the thread has been successfully archived.
+     */
+    fun archive(onComplete: (Boolean) -> Unit = {})
+
+    /**
      * Returns new instance of message handler for this [ChatThread].
      * @see ChatThreadMessageHandler
      */
@@ -86,6 +95,13 @@ interface ChatThreadHandler {
      * @see ChatFieldHandler
      */
     fun customFields(): ChatFieldHandler
+
+    /**
+     * Terminate the contact.
+     *
+     * @throws InvalidStateException if the current channel is not a live chat.
+     */
+    fun endContact()
 
     /**
      * Listener allowing to receive changes to a chat thread.

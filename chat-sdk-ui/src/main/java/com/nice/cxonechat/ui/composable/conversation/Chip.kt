@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.nice.cxonechat.ui.composable.conversation.model.Action.ReplyButton
+import com.nice.cxonechat.ui.composable.conversation.model.PreviewMessageProvider
 import com.nice.cxonechat.ui.composable.generic.forwardingPainter
 import com.nice.cxonechat.ui.composable.theme.ChatTheme
 import com.nice.cxonechat.ui.composable.theme.ChatTheme.chatShapes
@@ -127,7 +128,7 @@ private fun ChipPreview() {
         Column {
             Chip(
                 action = ReplyButton(
-                    action = PreviewReplyButton("Text"),
+                    action = PreviewMessageProvider.ReplyButton("Text"),
                     sendMessage = {}
                 ),
                 onSelected = {},
@@ -135,7 +136,7 @@ private fun ChipPreview() {
             )
             Chip(
                 action = ReplyButton(
-                    action = PreviewReplyButton("Random cat", "https://http.cat/203"),
+                    action = PreviewMessageProvider.ReplyButton("Random cat", "https://http.cat/203"),
                     sendMessage = {}
                 ),
                 onSelected = {},

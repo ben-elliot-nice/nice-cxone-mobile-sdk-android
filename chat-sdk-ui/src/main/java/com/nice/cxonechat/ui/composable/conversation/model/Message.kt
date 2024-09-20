@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import com.nice.cxonechat.ui.util.toShortDateString
 import java.util.Date
 import com.nice.cxonechat.message.Attachment as SdkAttachment
 import com.nice.cxonechat.message.Message as SdkMessage
-import com.nice.cxonechat.message.Message.Plugin as SdkPlugin
 
 /**
  * UI representation of [SdkMessage].
@@ -141,17 +140,6 @@ internal sealed class Message(original: SdkMessage) {
         val actions: List<Action> = message.actions.mapNotNull { action ->
             action.toUiAction(sendMessage)
         }
-    }
-
-    /**
-     * UI Version of [Message.Plugin].
-     */
-    data class Plugin(
-        private val message: SdkPlugin,
-        val sendMessage: (OutboundMessage) -> Unit
-    ) : Message(message) {
-        val postback = message.postback
-        val element = message.element?.let { PluginElement(it, sendMessage) }
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,10 @@
 
 package com.nice.cxonechat.ui.composable.theme
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.LocalContentColor
+import androidx.compose.material.LocalRippleConfiguration
 import androidx.compose.material.contentColorFor
-import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
@@ -42,6 +43,10 @@ fun contentColorFor(backgroundColor: Color): Color = when (backgroundColor) {
  * [androidx.compose.material.ripple.RippleTheme.rippleAlpha],
  * [androidx.compose.material.ripple.RippleAlpha.pressedAlpha] as a fraction.
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun Color.rippleVariant(): Color =
-    lerp(this, LocalRippleTheme.current.defaultColor(), LocalRippleTheme.current.rippleAlpha().pressedAlpha)
+internal fun Color.rippleVariant(): Color = lerp(
+    start = this,
+    stop = LocalRippleConfiguration.current?.color ?: Color.Unspecified,
+    fraction = LocalRippleConfiguration.current?.rippleAlpha?.pressedAlpha ?: 0.1f,
+)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -15,40 +15,42 @@
 
 package com.nice.cxonechat.internal.model.network
 
+import android.os.Build
 import com.google.gson.annotations.SerializedName
-
-private val RELEASE: String? = android.os.Build.VERSION.RELEASE
+import java.util.Locale
 
 /** Represents fingerprint data about the customer. */
 internal data class DeviceFingerprint(
-    @SerializedName("browser")
-    val browser: String = "",
-    @SerializedName("browserVersion")
-    val browserVersion: String = "",
     @SerializedName("country")
-    val country: String = "",
+    val country: String? = Locale.getDefault().country,
+
+    /** Current IP Address. */
     @SerializedName("ip")
-    val ip: String = "",
+    val ip: String? = null,
+
     @SerializedName("language")
-    val language: String = "",
+    val language: String? = Locale.getDefault().language,
+
     @SerializedName("location")
-    val location: String = "",
+    val location: String? = null,
 
     /** The type of application the customer is using (native or web app). */
     @SerializedName("applicationType")
-    private val applicationType: String = "native",
+    val applicationType: String? = "native",
 
     /** The operating system the customer is currently using. */
     @SerializedName("os")
-    private val os: String = "Android",
+    val os: String? = "Android",
 
     /** The operating system version that the customer is currently using. */
     @SerializedName("osVersion")
-    private val osVersion: String = RELEASE ?: "Unknown",
+    val osVersion: String? = Build.VERSION.RELEASE,
 
     /** The type of device that the customer is currently using. */
     @SerializedName("deviceType")
-    val deviceType: String = "mobile",
+    val deviceType: String? = "mobile",
+
+    /** Token uniquely identifying this device. This defaults to null since it may be considered PII. */
     @SerializedName("deviceToken")
-    val deviceToken: String = "",
+    val deviceToken: String? = null,
 )

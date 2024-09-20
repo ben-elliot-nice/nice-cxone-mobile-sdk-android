@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.nice.cxonechat.ui.model
 
 import androidx.compose.runtime.Immutable
 import com.nice.cxonechat.message.Message.ListPicker
-import com.nice.cxonechat.message.Message.Plugin
 import com.nice.cxonechat.message.Message.QuickReplies
 import com.nice.cxonechat.message.Message.RichLink
 import com.nice.cxonechat.message.Message.Text
@@ -50,7 +49,6 @@ internal data class Thread(
             ?.run {
                 when (this) {
                     is Text -> text
-                    is Plugin -> "Plugin message - content unavailable" // TODO implement
                     is RichLink -> fallbackText
                     is QuickReplies -> fallbackText
                     is ListPicker -> fallbackText

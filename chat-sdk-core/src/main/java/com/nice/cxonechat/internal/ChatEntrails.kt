@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@ import com.nice.cxonechat.api.RemoteService
 import com.nice.cxonechat.log.Logger
 import com.nice.cxonechat.state.Environment
 import com.nice.cxonechat.storage.ValueStorage
+import okhttp3.OkHttpClient
 
 internal interface ChatEntrails {
-
+    val sharedClient: OkHttpClient
     val storage: ValueStorage
     val service: RemoteService
     val threading: Threading

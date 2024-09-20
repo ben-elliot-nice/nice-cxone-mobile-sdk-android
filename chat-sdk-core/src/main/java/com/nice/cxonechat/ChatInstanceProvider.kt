@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 package com.nice.cxonechat
 
 import android.content.Context
-import com.nice.cxonechat.ChatState.CONNECTED
-import com.nice.cxonechat.ChatState.CONNECTING
-import com.nice.cxonechat.ChatState.CONNECTION_LOST
-import com.nice.cxonechat.ChatState.INITIAL
-import com.nice.cxonechat.ChatState.PREPARED
-import com.nice.cxonechat.ChatState.PREPARING
-import com.nice.cxonechat.ChatState.READY
+import com.nice.cxonechat.ChatState.Connected
+import com.nice.cxonechat.ChatState.Connecting
+import com.nice.cxonechat.ChatState.ConnectionLost
+import com.nice.cxonechat.ChatState.Initial
+import com.nice.cxonechat.ChatState.Offline
+import com.nice.cxonechat.ChatState.Prepared
+import com.nice.cxonechat.ChatState.Preparing
+import com.nice.cxonechat.ChatState.Ready
 import com.nice.cxonechat.exceptions.InvalidStateException
 import com.nice.cxonechat.exceptions.RuntimeChatException
 import com.nice.cxonechat.log.Logger
 import com.nice.cxonechat.log.LoggerNoop
 import com.nice.cxonechat.log.LoggerScope
+import com.nice.cxonechat.log.debug
 import com.nice.cxonechat.log.scope
 import com.nice.cxonechat.log.warning
-import com.nice.cxonechat.state.containsField
-import com.nice.cxonechat.state.validate
 import java.lang.ref.WeakReference
 
 /**
@@ -44,6 +44,7 @@ import java.lang.ref.WeakReference
  * @param deviceTokenProvider Provider of device tokens for push messages, default implementation will
  * disable push notifications.
  * @param logger The [Logger] used by the SDK, default is no-op implementation.
+ * @param customerId Optional customerId of the user.
  * @param chatBuilderProvider **INTERNAL USAGE ONLY** Provides [ChatBuilder].  For internal testing usage only.
  */
 @Suppress(
@@ -58,6 +59,7 @@ class ChatInstanceProvider private constructor(
     developmentMode: Boolean,
     deviceTokenProvider: DeviceTokenProvider?,
     logger: Logger,
+    customerId: String? = null,
     private val chatBuilderProvider: (Context, SocketFactoryConfiguration, Logger) -> ChatBuilder,
 ) : ChatStateListener, LoggerScope by LoggerScope(TAG, logger) {
     /** those interested in ChatInstanceProvider updates. */
@@ -118,6 +120,9 @@ class ChatInstanceProvider private constructor(
 
         /** Current [Logger]. */
         var logger: Logger
+
+        /** Current optional customer id. */
+        var customerId: String?
     }
 
     /** Current configuration. */
@@ -147,6 +152,10 @@ class ChatInstanceProvider private constructor(
     override val identity: Logger
         get() = logger
 
+    /** Current optional customerId. */
+    var customerId: String? = customerId
+        private set
+
     /** token provided by deviceTokenProvider. */
     private var deviceToken: String? = null
         set(value) {
@@ -171,7 +180,7 @@ class ChatInstanceProvider private constructor(
         val cancellable: Cancellable? = null,
     )
 
-    private var state = ChatStateInternal(INITIAL)
+    private var state = ChatStateInternal(Initial)
 
     /** Current chat state. */
     val chatState: ChatState
@@ -219,12 +228,12 @@ class ChatInstanceProvider private constructor(
     @Throws(InvalidStateException::class)
     @JvmOverloads
     fun prepare(context: Context, newConfig: SocketFactoryConfiguration? = null) = scope("prepare") {
-        if (state.state == PREPARED) {
+        if (state.state == Prepared) {
             warning("Ignoring prepare in PREPARED state")
             return@scope
         }
 
-        assertState(INITIAL) {
+        assertState(Initial) {
             "ChatInstanceProvider.prepare called in an incorrect state ($chatState). " +
                     "It is only valid from the INITIAL state."
         }
@@ -252,22 +261,25 @@ class ChatInstanceProvider private constructor(
                     setDeviceToken(token)
                 }
             }
+            .apply {
+                customerId?.let(::setCustomerId)
+            }
             .build { result: Result<Chat> ->
                 result.onSuccess { newChat ->
                     chat = newChat
-                    advanceState(PREPARED)
+                    advanceState(Prepared)
                     deviceToken?.let { chat?.setDeviceToken(it) }
                 }.onFailure {
                     warning("Failed to prepare Chat", it)
                     chat = null
-                    advanceState(INITIAL)
+                    advanceState(Initial)
                 }
             }
             .also {
                 // if build is synchronous, the chat will have already advanced
                 // to PREPARED, so just skip PREPARING.
                 if (it != Cancellable.noop) {
-                    advanceState(PREPARING, it)
+                    advanceState(Preparing, it)
                 }
             }
     }
@@ -280,14 +292,14 @@ class ChatInstanceProvider private constructor(
      */
     @Throws(InvalidStateException::class)
     fun connect() = scope("connect") {
-        if (state.state == CONNECTED) {
+        if (state.state == Connected) {
             warning("Ignoring connect in CONNECTED state")
             return@scope
         }
 
-        assertState({ setOf(PREPARED, CONNECTION_LOST).contains(it) }) {
+        assertState({ setOf(Prepared, ConnectionLost).contains(it) }) {
             "ChatInstanceProvider.connect called in invalid state ($chatState). " +
-                    "It is only allowed when the connection is either PREPARED or LOST_CONNECTION."
+                    "It is only allowed when the connection is either PREPARED, LOST_CONNECTION, or OFFLINE."
         }
 
         doConnect()
@@ -299,7 +311,7 @@ class ChatInstanceProvider private constructor(
 
             if (cancellable != Cancellable.noop) {
                 // if connect is synchronous skip CONNECTING state
-                advanceState(CONNECTING, cancellable = cancellable, cancel = false)
+                advanceState(Connecting, cancellable = cancellable, cancel = false)
             }
         }
     }
@@ -315,7 +327,7 @@ class ChatInstanceProvider private constructor(
         replaceWith = ReplaceWith("connect()")
     )
     fun reconnect() {
-        assertState(CONNECTION_LOST) {
+        assertState(ConnectionLost) {
             "ChatInstanceProvider.reconnect called in invalid state ($chatState). " +
                     "It is only allowed after when the connection has been closed by the server. "
         }
@@ -328,12 +340,12 @@ class ChatInstanceProvider private constructor(
      *
      * After `close()` is called, only usage of [Chat.events] is allowed.
      *
-     * The [state] is moved to [PREPARED].
+     * The [state] is moved to [Prepared].
      */
     fun close() {
         chat?.close()
 
-        advanceState(PREPARED)
+        advanceState(Prepared)
     }
 
     /**
@@ -342,13 +354,14 @@ class ChatInstanceProvider private constructor(
      */
     fun cancel() {
         when (chatState) {
-            INITIAL -> Unit
-            PREPARING -> advanceState(INITIAL)
-            PREPARED -> Unit
-            CONNECTING -> advanceState(PREPARED)
-            CONNECTED -> Unit
-            CONNECTION_LOST -> advanceState(PREPARED)
-            READY -> Unit
+            Initial -> Unit
+            Preparing -> advanceState(Initial)
+            Prepared -> Unit
+            Connecting -> advanceState(Prepared)
+            Connected -> Unit
+            ConnectionLost -> advanceState(Prepared)
+            Offline -> advanceState(Prepared)
+            Ready -> Unit
         }
     }
 
@@ -363,7 +376,7 @@ class ChatInstanceProvider private constructor(
             chat?.signOut()
             chat = null
 
-            advanceState(INITIAL)
+            advanceState(Initial)
         }
     }
 
@@ -373,19 +386,10 @@ class ChatInstanceProvider private constructor(
      * Note: This routine can be called any time there is a chat object.  If there
      * is no chat object, it will be silently ignored.
      *
-     * @param values Custom values to set.  These will be filtered by the chat's
-     * configured available customerCustomFields.
+     * @param values Custom values to set.
      */
     fun setCustomerValues(values: Map<String, String>) = apply {
-        chat?.run {
-            val customerCustomFields = configuration.customerCustomFields
-            val fields = values.filterKeys(customerCustomFields::containsField)
-
-            runCatching { customerCustomFields.validate(fields) }
-                .onSuccess {
-                    customFields().add(fields)
-                }
-        }
+        chat?.customFields()?.add(values)
     }
 
     /**
@@ -440,6 +444,12 @@ class ChatInstanceProvider private constructor(
                 set(value) {
                     provider.logger = value
                 }
+
+            override var customerId: String?
+                get() = provider.customerId
+                set(value) {
+                    provider.customerId = value
+                }
         }
 
         signOut()
@@ -451,12 +461,13 @@ class ChatInstanceProvider private constructor(
 
     @JvmSynthetic
     internal fun advanceState(next: ChatState, cancellable: Cancellable? = null, cancel: Boolean = true) {
+        debug("advanceState: $chatState -> $next")
         if (chatState != next) {
             if (cancel) {
                 state.cancellable?.cancel()
             }
 
-            if (next in setOf(PREPARING, CONNECTING)) {
+            if (next in setOf(Preparing, Connecting)) {
                 assert(cancellable != null) {
                     "Internal error: advanceState($next) requires a cancellable."
                 }
@@ -491,15 +502,19 @@ class ChatInstanceProvider private constructor(
     //
 
     override fun onConnected() {
-        advanceState(CONNECTED)
+        advanceState(Connected)
     }
 
     override fun onReady() {
-        advanceState(READY)
+        if (requireNotNull(chat).isChatAvailable) {
+            advanceState(Ready)
+        } else {
+            advanceState(Offline)
+        }
     }
 
     override fun onUnexpectedDisconnect() {
-        advanceState(CONNECTION_LOST)
+        advanceState(ConnectionLost)
     }
 
     override fun onChatRuntimeException(exception: RuntimeChatException) {
@@ -538,6 +553,7 @@ class ChatInstanceProvider private constructor(
          * @param developmentMode True if in development mode to get extra logging.
          * @param deviceTokenProvider Provider of device tokens for push messages.
          * @param logger [Logger] to be used by the ChatInstanceProvider and Chat.
+         * @param customerId Optional, customerId of the user.
          * @return the newly created ChatInstanceProvider singleton.
          */
         @Suppress(
@@ -551,6 +567,7 @@ class ChatInstanceProvider private constructor(
             developmentMode: Boolean = false,
             deviceTokenProvider: DeviceTokenProvider? = null,
             logger: Logger = LoggerNoop,
+            customerId: String? = null,
         ) = create(
             configuration,
             authorization,
@@ -558,6 +575,7 @@ class ChatInstanceProvider private constructor(
             developmentMode,
             deviceTokenProvider,
             logger,
+            customerId,
             ChatBuilder.Companion::invoke,
         )
 
@@ -570,6 +588,7 @@ class ChatInstanceProvider private constructor(
          * @param developmentMode True if in development mode to get extra logging.
          * @param deviceTokenProvider Provider of device tokens for push messages.
          * @param logger [Logger] to be used by the ChatInstanceProvider and Chat.
+         * @param customerId Optional customerId of the user.
          * @param chatBuilderProvider **INTERNAL USAGE ONLY** Provides [ChatBuilder].  For internal testing usage only.
          * @return the newly created ChatInstanceProvider singleton.
          */
@@ -582,6 +601,7 @@ class ChatInstanceProvider private constructor(
             developmentMode: Boolean = false,
             deviceTokenProvider: DeviceTokenProvider? = null,
             logger: Logger = LoggerNoop,
+            customerId: String? = null,
             chatBuilderProvider: (Context, SocketFactoryConfiguration, Logger) -> ChatBuilder,
         ) = ChatInstanceProvider(
             configuration,
@@ -590,6 +610,7 @@ class ChatInstanceProvider private constructor(
             developmentMode,
             deviceTokenProvider,
             logger,
+            customerId,
             chatBuilderProvider,
         ).also {
             instance = it

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ import com.nice.cxonechat.Cancellable
 import com.nice.cxonechat.ChatActionHandler
 import com.nice.cxonechat.ChatEventHandler
 import com.nice.cxonechat.ChatFieldHandler
+import com.nice.cxonechat.ChatMode.LiveChat
+import com.nice.cxonechat.ChatMode.MultiThread
+import com.nice.cxonechat.ChatMode.SingleThread
 import com.nice.cxonechat.ChatStateListener
 import com.nice.cxonechat.ChatThreadsHandler
 import com.nice.cxonechat.event.PageViewEvent
@@ -35,6 +38,7 @@ import okhttp3.WebSocket
 import retrofit2.Callback
 import java.util.concurrent.atomic.AtomicReference
 
+@Suppress("TooManyFunctions")
 internal class ChatImpl(
     override var connection: Connection,
     override val entrails: ChatEntrails,
@@ -42,9 +46,10 @@ internal class ChatImpl(
     override val configuration: ConfigurationInternal,
     private val callback: Callback<Void>,
     override val chatStateListener: ChatStateListener?,
-) : ChatWithParameters {
+) : ChatWithParameters, AutoCloseable {
 
     override val socketListener: ProxyWebSocketListener = socketFactory.createProxyListener()
+
     override val socket: WebSocket?
         get() = socketSession.get()
 
@@ -57,9 +62,11 @@ internal class ChatImpl(
 
     override var lastPageViewed: PageViewEvent? = null
 
+    override var isChatAvailable: Boolean = true
+
     override fun setDeviceToken(token: String?) {
         val currentToken = entrails.storage.deviceToken
-        val newToken = token.orEmpty()
+        val newToken = token
         if (currentToken == newToken) return
         entrails.storage.deviceToken = newToken
         entrails.service.createOrUpdateVisitor(
@@ -73,9 +80,13 @@ internal class ChatImpl(
         var handler: ChatThreadsHandler
         handler = ChatThreadsHandlerImpl(this, configuration.preContactSurvey)
         handler = ChatThreadsHandlerReplayLastEmpty(handler)
+        handler = when (chatMode) {
+            SingleThread -> ChatThreadsHandlerSingle(this, handler)
+            MultiThread -> ChatThreadsHandlerMulti(this, handler)
+            LiveChat -> ChatThreadsHandlerLive(this, handler)
+        }
         handler = ChatThreadsHandlerConfigProxy(handler, this)
         handler = ChatThreadsHandlerMessages(handler)
-        handler = ChatThreadsHandlerMetadata(handler, this)
         handler = ChatThreadsHandlerMemoizeHandlers(handler)
         return handler
     }
@@ -120,5 +131,10 @@ internal class ChatImpl(
         if (!configuration.isAuthorizationEnabled) {
             connection = connection.asCopyable().copy(firstName = firstName, lastName = lastName)
         }
+    }
+
+    override fun getChannelAvailability(callback: (Boolean) -> Unit): Cancellable {
+        callback(isChatAvailable)
+        return Cancellable.noop
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -95,6 +95,8 @@ interface ChatThreadMessageHandler {
      * @param listener listener to be notified when the message has been sent.
      * @throws InvalidParameterException if the message is empty, ie., has no attachment,
      * message, or postback.
+     * @throws IllegalStateException in case the [com.nice.cxonechat.thread.ChatThread.canAddMoreMessages] is false
+     * and application tries to send a new message to such thread.
      */
     fun send(message: OutboundMessage, listener: OnMessageTransferListener? = null)
 

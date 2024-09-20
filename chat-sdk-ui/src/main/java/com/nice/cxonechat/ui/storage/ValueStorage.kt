@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ internal class ValueStorage(
     }
 
     enum class StringKey(val value: Key<String>) {
-        CUSTOMER_CUSTOM_VALUES_KEY(stringPreferencesKey(PREF_CUSTOM_VALUES)),
-        REQUESTED_PERMISSIONS_KEY(stringPreferencesKey(PREF_REQUESTED_PERMISSIONS))
+        CustomerCustomValuesKey(stringPreferencesKey(PREF_CUSTOM_VALUES)),
+        RequestedPermissionsKey(stringPreferencesKey(PREF_REQUESTED_PERMISSIONS))
     }
 }

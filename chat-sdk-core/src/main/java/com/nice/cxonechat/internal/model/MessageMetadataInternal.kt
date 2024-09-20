@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ package com.nice.cxonechat.internal.model
 
 import com.nice.cxonechat.message.MessageMetadata
 import com.nice.cxonechat.message.MessageStatus
-import com.nice.cxonechat.message.MessageStatus.READ
-import com.nice.cxonechat.message.MessageStatus.SEEN
-import com.nice.cxonechat.message.MessageStatus.SENT
+import com.nice.cxonechat.message.MessageStatus.Read
+import com.nice.cxonechat.message.MessageStatus.Seen
+import com.nice.cxonechat.message.MessageStatus.Sent
 import java.util.Date
 
 internal data class MessageMetadataInternal(
@@ -29,9 +29,9 @@ internal data class MessageMetadataInternal(
 
     @Transient
     override val status: MessageStatus = when {
-        readAt != null -> READ
-        seenAt != null -> SEEN
-        else -> SENT
+        readAt != null -> Read
+        seenAt != null -> Seen
+        else -> Sent
     }
 
     override fun toString(): String = "MessageMetadata(" +

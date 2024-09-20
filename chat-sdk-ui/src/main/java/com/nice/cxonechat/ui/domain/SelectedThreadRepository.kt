@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,22 @@
 package com.nice.cxonechat.ui.domain
 
 import com.nice.cxonechat.ChatThreadHandler
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import org.koin.core.annotation.Single
 
 @Suppress("UseDataClass")
 @Single
 internal class SelectedThreadRepository {
-    var chatThreadHandler: ChatThreadHandler? = null
+    private val mutableChatThreadHandlerFlow: MutableStateFlow<ChatThreadHandler?> = MutableStateFlow(null)
+
+    var chatThreadHandler: ChatThreadHandler?
+        get() = mutableChatThreadHandlerFlow.value
+        set(value) {
+             mutableChatThreadHandlerFlow.value = value
+        }
+    val chatThreadHandlerFlowNullable = mutableChatThreadHandlerFlow.asStateFlow()
+    val chatThreadHandlerFlow = chatThreadHandlerFlowNullable.filterNotNull().distinctUntilChanged()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,16 @@ abstract class ChatThread {
     /** Custom fields attached to this thread. */
     abstract val fields: List<CustomField>
 
+    /** Position in queue if this is a Live Chat. Always zero if this is not a live chat. */
+    abstract val positionInQueue: Int?
+
+    /** Is any agent online? Always true if this is not a live chat. */
+    abstract val hasOnlineAgent: Boolean
+
     /** Whether there are more messages to load in the thread. */
     val hasMoreMessagesToLoad: Boolean
         get() = scrollToken.isNotEmpty()
+
+    /** Id of the current active contact for the thread. */
+    internal open val contactId: String? = null
 }

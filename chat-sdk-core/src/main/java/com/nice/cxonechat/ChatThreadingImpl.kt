@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -22,5 +22,9 @@ internal class ChatThreadingImpl(
 ) : ChatWithParameters by origin {
     override fun connect(): Cancellable = origin.entrails.threading.background {
         origin.connect()
+    }
+
+    override fun getChannelAvailability(callback: (Boolean) -> Unit): Cancellable = origin.entrails.threading.background {
+        origin.getChannelAvailability(callback)
     }
 }

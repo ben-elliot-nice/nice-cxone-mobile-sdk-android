@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 package com.nice.cxonechat.internal.model.network
 
 import com.google.gson.annotations.SerializedName
+import com.nice.cxonechat.enums.EventType.ThreadRecovered
 import com.nice.cxonechat.internal.model.AgentModel
 import com.nice.cxonechat.internal.model.CustomFieldModel
 import com.nice.cxonechat.internal.model.MessageModel
+import com.nice.cxonechat.internal.socket.EventCallback.ReceivedEvent
 import com.nice.cxonechat.thread.ChatThread
 
 internal data class EventThreadRecovered(
@@ -28,10 +30,13 @@ internal data class EventThreadRecovered(
 
     private val data get() = postback.data
     val agent get() = data.inboxAssignee?.toAgent()
-    val messages get() = data.messages.mapNotNull(MessageModel::toMessage)
+    val messages get() = data.messages.orEmpty().mapNotNull(MessageModel::toMessage)
     val thread get() = data.thread
         .toChatThread()
-        .copy(fields = postback.data.contact?.customFields.orEmpty().map(CustomFieldModel::toCustomField))
+        .copy(
+            fields = postback.data.contact?.customFields.orEmpty().map(CustomFieldModel::toCustomField),
+            contactId = data.contact?.id,
+        )
     val scrollToken get() = data.messagesScrollToken
     val customerCustomFields get() = data.customer?.customFields.orEmpty().map(CustomFieldModel::toCustomField)
 
@@ -40,7 +45,7 @@ internal data class EventThreadRecovered(
 
     data class Data(
         @SerializedName("messages")
-        val messages: List<MessageModel>,
+        val messages: List<MessageModel>?,
         @SerializedName("inboxAssignee")
         val inboxAssignee: AgentModel?,
         @SerializedName("thread")
@@ -50,6 +55,10 @@ internal data class EventThreadRecovered(
         @SerializedName("customer")
         val customer: CustomFieldsData? = null,
         @SerializedName("contact", alternate = ["consumerContact"])
-        val contact: CustomFieldsData? = null,
+        val contact: ContactFieldData? = null,
     )
+
+    companion object : ReceivedEvent<EventThreadRecovered> {
+        override val type = ThreadRecovered
+    }
 }

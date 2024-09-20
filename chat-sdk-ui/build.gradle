@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+ *
+ * Licensed under the NICE License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/nice-devone/nice-cxone-mobile-sdk-android/blob/main/LICENSE
+ *
+ * TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE CXONE MOBILE SDK IS PROVIDED ON
+ * AN “AS IS” BASIS. NICE HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS
+ * OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND TITLE.
+ */
+
 plugins {
     id "android-library-conventions"
     id "android-ui-conventions"
@@ -36,28 +51,25 @@ android {
 
 dependencies {
     // GSON is used for parsing of payload in Plugin Custom messages
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation libs.gson
 
     // Handling of push notification sent via FCM
-    implementation platform('com.google.firebase:firebase-bom:32.7.1')
-    implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.messaging
     // Lifecycle-process is used to suppress push notifications when app is in foreground
-    implementation "androidx.lifecycle:lifecycle-process:2.7.0"
+    implementation libs.androidx.lifecycle
 
-    def markdownVersion = "0.4.1"
-    implementation "com.github.jeziellago:compose-markdown:$markdownVersion"
+    implementation libs.compose.markdown
 
     // Async Image
-    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation libs.coil.compose
     // Zoomable composable elements like Image & AsyncImage
-    implementation "net.engawapg.lib:zoomable:1.5.3"
+    implementation libs.zoomable
 
     // Multimedia message playback
-    def media3Version = "1.2.1"
-    implementation "androidx.media3:media3-exoplayer:$media3Version"
-    implementation "androidx.media3:media3-datasource-okhttp:$media3Version"
-    implementation "androidx.media3:media3-ui:$media3Version"
+    implementation libs.media.exoplayer
+    implementation libs.media.datasource.okhttp
+    implementation libs.media.ui
 
     // CXOne Chat SDK
     implementation project(":chat-sdk-core")
@@ -65,5 +77,5 @@ dependencies {
     implementation project(':utilities')
 
     // Immutable annotations
-    implementation "com.google.code.findbugs:jsr305:3.0.2"
+    implementation libs.findbugs
 }

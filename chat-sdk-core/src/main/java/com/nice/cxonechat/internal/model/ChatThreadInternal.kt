@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,10 @@ internal data class ChatThreadInternal(
     override val scrollToken: String = "",
     override val fields: List<CustomField> = emptyList(),
     override val threadState: ChatThreadState,
+    override val positionInQueue: Int? = null,
+    override val hasOnlineAgent: Boolean = true,
+    override val contactId: String? = null,
 ) : ChatThread() {
-
     override fun toString() = buildString {
         append("ChatThread(id=")
         append(id)
@@ -50,6 +52,12 @@ internal data class ChatThreadInternal(
         append(fields)
         append("', state=")
         append(threadState)
+        append(", positionInQueue=")
+        append(positionInQueue)
+        append(", hasOnlineAgent=")
+        append(hasOnlineAgent)
+        append(", contactId=")
+        append(contactId)
         append(")")
     }
 }

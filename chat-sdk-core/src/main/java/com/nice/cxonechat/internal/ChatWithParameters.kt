@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,19 @@ package com.nice.cxonechat.internal
 import com.nice.cxonechat.Chat
 import com.nice.cxonechat.ChatStateListener
 import com.nice.cxonechat.event.PageViewEvent
+import com.nice.cxonechat.internal.model.ConfigurationInternal
 import com.nice.cxonechat.internal.socket.ProxyWebSocketListener
 import com.nice.cxonechat.state.Connection
 import com.nice.cxonechat.thread.CustomField
 import okhttp3.WebSocket
 
+@Suppress(
+    "ComplexInterface"
+)
 internal interface ChatWithParameters : Chat {
 
     val entrails: ChatEntrails
+    override val configuration: ConfigurationInternal
     val socket: WebSocket?
     val socketListener: ProxyWebSocketListener
     var connection: Connection
@@ -35,6 +40,8 @@ internal interface ChatWithParameters : Chat {
     var lastPageViewed: PageViewEvent?
 
     val chatStateListener: ChatStateListener?
+
+    override var isChatAvailable: Boolean
 
     val storage get() = entrails.storage
     val service get() = entrails.service

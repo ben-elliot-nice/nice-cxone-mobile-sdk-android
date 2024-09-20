@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,9 @@ internal class ChatThreadCopyable(
         scrollToken: String = model.scrollToken,
         fields: List<CustomField> = model.fields,
         threadState: ChatThreadState = model.threadState,
+        positionInQueue: Int? = model.positionInQueue,
+        hasOnlineAgent: Boolean = model.hasOnlineAgent,
+        contactId: String? = model.contactId,
     ) = ChatThreadInternal(
         id = id,
         threadName = threadName,
@@ -47,6 +50,9 @@ internal class ChatThreadCopyable(
         scrollToken = scrollToken,
         fields = fields,
         threadState = threadState,
+        positionInQueue = positionInQueue,
+        hasOnlineAgent = hasOnlineAgent,
+        contactId = contactId,
     )
 
     companion object {

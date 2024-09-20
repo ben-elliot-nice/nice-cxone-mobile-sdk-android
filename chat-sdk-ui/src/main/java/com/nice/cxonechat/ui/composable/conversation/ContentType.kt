@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -16,42 +16,28 @@
 package com.nice.cxonechat.ui.composable.conversation
 
 import androidx.compose.runtime.Stable
-import com.nice.cxonechat.ui.composable.conversation.ContentType.ATTACHMENT
-import com.nice.cxonechat.ui.composable.conversation.ContentType.LIST_PICKER
-import com.nice.cxonechat.ui.composable.conversation.ContentType.PLUGIN
-import com.nice.cxonechat.ui.composable.conversation.ContentType.QUICK_REPLY
-import com.nice.cxonechat.ui.composable.conversation.ContentType.RICH_LINK
-import com.nice.cxonechat.ui.composable.conversation.ContentType.TEXT
-import com.nice.cxonechat.ui.composable.conversation.ContentType.UNSUPPORTED
+import com.nice.cxonechat.ui.composable.conversation.ContentType.Attachment
 import com.nice.cxonechat.ui.composable.conversation.model.Message
-import com.nice.cxonechat.ui.composable.conversation.model.Message.ListPicker
-import com.nice.cxonechat.ui.composable.conversation.model.Message.Plugin
-import com.nice.cxonechat.ui.composable.conversation.model.Message.QuickReply
-import com.nice.cxonechat.ui.composable.conversation.model.Message.RichLink
-import com.nice.cxonechat.ui.composable.conversation.model.Message.Text
-import com.nice.cxonechat.ui.composable.conversation.model.Message.Unsupported
 import com.nice.cxonechat.ui.composable.conversation.model.Message.WithAttachments
 
 @Stable
 internal val Message.contentType: ContentType
     get() = when (this) {
-        is WithAttachments -> ATTACHMENT
-        is Text -> TEXT
-        is ListPicker -> LIST_PICKER
-        is RichLink -> RICH_LINK
-        is QuickReply -> QUICK_REPLY
-        is Plugin -> PLUGIN
-        is Unsupported -> UNSUPPORTED
+        is WithAttachments -> Attachment
+        is Message.Text -> ContentType.Text
+        is Message.ListPicker -> ContentType.ListPicker
+        is Message.RichLink -> ContentType.RichLink
+        is Message.QuickReply -> ContentType.QuickReply
+        is Message.Unsupported -> ContentType.Unsupported
     }
 
 internal enum class ContentType {
-    UNSUPPORTED,
-    DATE_HEADER,
-    ATTACHMENT,
-    TEXT,
-    QUICK_REPLY,
-    LOADING,
-    LIST_PICKER,
-    RICH_LINK,
-    PLUGIN,
+    Unsupported,
+    DateHeader,
+    Attachment,
+    Text,
+    QuickReply,
+    Loading,
+    ListPicker,
+    RichLink,
 }

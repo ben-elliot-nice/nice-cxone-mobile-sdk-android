@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.nice.cxonechat.Public
 /**
  * The various options for how a channel is configured.
  */
+@Suppress("ComplexInterface")
 @Public
 interface Configuration {
 
@@ -36,17 +37,35 @@ interface Configuration {
      * Custom fields defined for supplying of additional information about customer,
      * for example data supplied during a pre-chat survey.
      */
+    @Deprecated(
+        message = "Client side validation of [FieldDefinition]s is no longer supported."
+    )
     val contactCustomFields: FieldDefinitionList
 
     /**
      * Definition of possible custom fields which are usable/valid for all
      * contacts with the customer.
      */
+    @Deprecated(
+        message = "Client side validation of [FieldDefinition]s is no longer supported."
+    )
     val customerCustomFields: FieldDefinitionList
 
     /** Return the list of all available customer fields. */
+    @Deprecated(
+        message = "Client side validation of [FieldDefinition]s is no longer supported."
+    )
     val allCustomFields: FieldDefinitionList
         get() = contactCustomFields + customerCustomFields
+
+    /** File attachment restrictions. */
+    val fileRestrictions: FileRestrictions
+
+    /** True iff this is a live chat. */
+    val isLiveChat: Boolean
+
+    /** True iff services are online. */
+    val isOnline: Boolean
 
     /**
      * Check if a given field ID is allowed by the receiving [Configuration].
@@ -55,6 +74,45 @@ interface Configuration {
      * @return Returns true iff [fieldId] is valid with the current configuration, i.e.,
      * is included in either [contactCustomFields] or [customerCustomFields].
      */
+    @Deprecated(
+        message = "Client side validation of [FieldDefinition]s is no longer supported."
+    )
     fun allowsFieldId(fieldId: String): Boolean =
         allCustomFields.containsField(fieldId)
+
+    /**
+     * Check if a given feature is supported by string.
+     *
+     * **Note:** This exists only to test for features unknown at release time.
+     * All other features should be checked via [hasFeature(Feature)]
+     *
+     * @param feature Feature to test.
+     */
+    fun hasFeature(feature: String): Boolean
+
+    /**
+     * Check if a given feature is supported by Feature name.
+     *
+     * @param feature Feature to test.
+     */
+    fun hasFeature(feature: Feature) = hasFeature(feature.key)
+
+    /**
+     * List of features known at release time.
+     */
+    @Public
+    enum class Feature(internal val key: String) {
+        /** If true indicates that the live chat logo should not be displayed. */
+        LiveChatLogoHidden("liveChatLogoHidden"),
+
+        /** If true indicates that chat is available proactively. */
+        ProactiveChatEnabled("isProactiveChatEnabled"),
+
+        /**
+         * If true indicates that RecoverLiveChat will not fail if no live chat thread
+         * is currently available, but rather, a new thread will be created if none
+         * currently exists.
+         */
+        RecoverLiveChatDoesNotFail("isRecoverLivechatDoesNotFailEnabled")
+    }
 }

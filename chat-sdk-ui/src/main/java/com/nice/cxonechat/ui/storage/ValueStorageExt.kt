@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package com.nice.cxonechat.ui.storage
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.nice.cxonechat.ui.storage.ValueStorage.StringKey.CUSTOMER_CUSTOM_VALUES_KEY
+import com.nice.cxonechat.ui.storage.ValueStorage.StringKey.CustomerCustomValuesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -28,7 +28,7 @@ internal suspend fun ValueStorage.getCustomerCustomValues(): Map<String, String>
         String::class.java,
         String::class.java
     ) as? TypeToken<Map<String, String>>?
-    val json = getString(CUSTOMER_CUSTOM_VALUES_KEY).firstNotBlankOrNull()
+    val json = getString(CustomerCustomValuesKey).firstNotBlankOrNull()
     return if (json != null) {
         Gson().fromJson(json, parameterized) ?: emptyMap()
     } else {

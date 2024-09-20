@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -165,7 +165,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
     override fun loginWithAmazon() = logger.scope("loginWithAmazon") {
         val (codeVerifier, codeChallenge) = PKCE.generateCodeVerifier()
 
-        requestContext.registerListener(LoggingAuthorizeListener(codeVerifier, this))
+        requestContext.registerListener(LoggingAuthorizeListener(codeVerifier, storeViewModel, this))
 
         AuthorizationManager.authorize(
             AuthorizeRequest.Builder(requestContext)
@@ -178,6 +178,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
 
     private inner class LoggingAuthorizeListener(
         private val codeVerifier: String,
+        private val storeViewModel: StoreViewModel,
         logger: Logger,
     ) : AuthorizeListener(), LoggerScope by LoggerScope<AuthorizeListener>(logger) {
         override fun onSuccess(result: AuthorizeResult?) = scope("onSuccess") {

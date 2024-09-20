@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,12 @@ internal class ChatThreadHandlerLogging(
         }
     }
 
+    override fun archive(onComplete: (Boolean) -> Unit) = scope("archive") {
+        duration {
+            origin.archive(onComplete)
+        }
+    }
+
     override fun messages() = scope("messages") {
         duration {
             var handler = origin.messages()
@@ -76,6 +82,12 @@ internal class ChatThreadHandlerLogging(
             var handler = origin.customFields()
             handler = ChatFieldHandlerLogging(handler, identity)
             handler
+        }
+    }
+
+    override fun endContact() = scope("endContact") {
+        duration {
+            origin.endContact()
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import com.nice.cxonechat.internal.model.MessageDirectionModel.ToClient
 import com.nice.cxonechat.internal.model.network.MessagePolyContent
 import com.nice.cxonechat.internal.model.network.MessagePolyContent.ListPicker
 import com.nice.cxonechat.internal.model.network.MessagePolyContent.Noop
-import com.nice.cxonechat.internal.model.network.MessagePolyContent.Plugin
 import com.nice.cxonechat.internal.model.network.MessagePolyContent.QuickReplies
 import com.nice.cxonechat.internal.model.network.MessagePolyContent.RichLink
 import com.nice.cxonechat.internal.model.network.MessagePolyContent.Text
@@ -65,7 +64,6 @@ internal data class MessageModel(
         }
 
     fun toMessage() = when (messageContent) {
-        is Plugin -> MessagePlugin(this)
         is Text -> MessageText(this)
         is QuickReplies -> MessageQuickReplies(this)
         is ListPicker -> MessageListPicker(this)

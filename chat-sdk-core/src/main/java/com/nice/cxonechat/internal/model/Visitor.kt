@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.nice.cxonechat.state.Connection
 /**
  * All information about a visitor.
  */
-internal data class Visitor constructor(
+internal data class Visitor(
     @SerializedName("customerIdentity")
     val customerIdentity: CustomerIdentityModel? = null,
     @SerializedName("browserFingerprint")
@@ -37,14 +37,8 @@ internal data class Visitor constructor(
     val customVariables: List<CustomVariable>? = null,
 ) {
     constructor(
-        deviceToken: String,
-    ) : this(
-        deviceFingerprint = DeviceFingerprint(deviceToken = deviceToken)
-    )
-
-    constructor(
         connection: Connection,
-        deviceToken: String = "",
+        deviceToken: String? = null,
     ) : this(
         customerIdentity = connection.asCustomerIdentity().redacted(),
         deviceFingerprint = DeviceFingerprint(deviceToken = deviceToken)
