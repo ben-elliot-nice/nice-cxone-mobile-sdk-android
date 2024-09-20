@@ -16,6 +16,7 @@
 package com.nice.cxonechat.sample
 
 import android.content.Context
+import android.util.Log
 import androidx.startup.Initializer
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
@@ -30,6 +31,7 @@ import com.nice.cxonechat.sample.utilities.logging.FirebaseLogger
 class ChatInitializer : Initializer<ChatInstanceProvider> {
     override fun create(context: Context): ChatInstanceProvider {
         /* set up the chat instance provider */
+        Log.i("BEN DEBUG - CHAT INIT", "WHEN DOES THIS HAPPEN IN THE LIFECYCLE?")
         val settings = ChatSettingsRepository(context).load()
         UISettingsRepository(context).load()
         return ChatInstanceProvider.create(

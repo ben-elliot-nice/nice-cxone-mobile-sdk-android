@@ -17,6 +17,7 @@ package com.nice.cxonechat.sample.viewModel
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.AndroidViewModel
 import com.nice.cxonechat.ChatInstanceProvider
@@ -109,13 +110,17 @@ class StoreViewModel(
     /**
      * Start up chat as required/possible.
      */
-    private fun startChat() {
+    fun startChat() {
         listener.onChatStateChanged(chatProvider.chatState)
 
         if (chatSettingsRepository.settings.value == null) {
+            Log.i("BEN DEBUG - StoreViewModel", "No Chat Settings Value")
             setUiState(Configuration(this))
         } else if (uiState.value is Configuration) {
+            Log.i("BEN DEBUG - StoreViewModel", "Prepare is called")
             chatProvider.prepare(context)
+        } else {
+            Log.i("BEN DEBUG - StoreViewModel", "BROKEN")
         }
     }
 

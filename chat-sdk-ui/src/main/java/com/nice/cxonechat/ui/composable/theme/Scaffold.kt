@@ -143,8 +143,7 @@ private fun ChatTheme.TopBarTitle(logo: Any?, title: String) {
             AsyncImage(
                 model = logo,
                 modifier = Modifier
-                    .size(size)
-                    .padding(padding),
+                    .size(size),
                 contentDescription = null,
                 imageLoader = ImageLoader.Builder(LocalContext.current).interceptorDispatcher(Dispatchers.IO).build(),
                 placeholder = if (LocalInspectionMode.current) { // Default mipmap has issues in preview.

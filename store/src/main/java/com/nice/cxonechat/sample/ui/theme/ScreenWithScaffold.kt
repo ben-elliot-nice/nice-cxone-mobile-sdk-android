@@ -87,13 +87,6 @@ fun AppTheme.ScreenWithScaffold(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = {
-            TopBar(
-                title,
-                navigationIcon = navigationIcon,
-                actions = actions
-            )
-        },
         floatingActionButton = { ChatFab(onClick = onOpenChat) },
         drawerContent = drawerContent?.let {
             {

@@ -22,6 +22,7 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import android.view.WindowManager.LayoutParams
 import androidx.annotation.AnimRes
 import androidx.appcompat.app.AlertDialog
@@ -106,6 +107,8 @@ class ChatActivity : AppCompatActivity() {
         applyFixesForKeyboardInput()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
         setupComposableUi()
 

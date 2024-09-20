@@ -16,6 +16,7 @@
 package com.nice.cxonechat.sample.data.repository
 
 import android.content.Context
+import androidx.compose.ui.graphics.Color
 import com.nice.cxonechat.sample.data.models.UISettingsModel
 import com.nice.cxonechat.sample.data.models.UISettingsModel.Colors
 import com.nice.cxonechat.ui.composable.theme.ChatThemeDetails
@@ -46,7 +47,7 @@ class UISettingsRepository(
 ) {
     private val Colors.asChatThemeColors: ThemeColors
         get() = ThemeColors(
-            primary = primary,
+            primary = Color(android.graphics.Color.parseColor("#FFFFFF")),
             onPrimary = onPrimary,
             background = background,
             onBackground = onBackground,

@@ -1,0 +1,17 @@
+{
+  "configurations": [
+    {
+      "name": "BE_APK",
+      "environment": {
+        "name": "NA1",
+        "location": "North America",
+        "baseUrl": "https://channels-de-na1.niceincontact.com/",
+        "socketUrl": "wss://chat-gateway-de-na1.niceincontact.com",
+        "originHeader": "https://livechat-de-na1.niceincontact.com",
+        "chatUrl": "https://channels-de-na1.niceincontact.com/chat/"
+      },
+      "brandId": 1092,
+      "channelId": "chat_03b46cc1-f56f-40ec-be52-538154acb5c9"
+    }
+  ]
+}

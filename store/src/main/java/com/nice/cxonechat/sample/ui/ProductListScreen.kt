@@ -18,6 +18,7 @@ package com.nice.cxonechat.sample.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -58,6 +60,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import coil.compose.AsyncImage
+import com.nice.cxonechat.sample.R
 import com.nice.cxonechat.sample.R.string
 import com.nice.cxonechat.sample.data.models.Product
 import com.nice.cxonechat.sample.extensions.asCurrency
@@ -192,28 +195,8 @@ object ProductListScreen : Screen {
     ) {
         AppTheme.ScreenWithScaffold(
             title = stringResource(string.app_name),
-            actions = showCart,
-            drawerContent = { close ->
-                Drawer(
-                    onUiSettings = {
-                        close()
-                        onUiSettings()
-                    },
-                    onSdkSettings = {
-                        close()
-                        onSdkSettings()
-                    },
-                    onLogout = {
-                        close()
-                        onLogout()
-                    }
-                )
-            }
         ) {
-            ProductListView(
-                products,
-                onProductSelected = onProductSelected,
-            )
+            FullScreenImage()
         }
     }
 
@@ -237,6 +220,16 @@ object ProductListScreen : Screen {
                     )
                 }
             }
+        )
+    }
+
+    @Composable
+    fun FullScreenImage() {
+        Image(
+            painter = painterResource(id = R.drawable.va_home), // replace with your image resource
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
     }
 
@@ -286,10 +279,18 @@ object ProductListScreen : Screen {
     }
 }
 
+//@Preview
+//@Composable
+//private fun ProductListPreview(@PreviewParameter(ProductsParameterProvider::class) products: List<Product>) {
+//    AppTheme {
+//        ProductListScreen.Screen(products, {}, {}, {}, {}, {})
+//    }
+//}
+
 @Preview
 @Composable
-private fun ProductListPreview(@PreviewParameter(ProductsParameterProvider::class) products: List<Product>) {
+private fun ProductListPreview() {
     AppTheme {
-        ProductListScreen.Screen(products, {}, {}, {}, {}, {})
+        ProductListScreen.FullScreenImage()
     }
 }

@@ -16,10 +16,15 @@
 package com.nice.cxonechat.sample
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.WindowInsetsController
+import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.PickVisualMediaRequest
@@ -39,6 +44,7 @@ import com.amazon.identity.auth.device.api.authorization.AuthorizeRequest
 import com.amazon.identity.auth.device.api.authorization.AuthorizeResult
 import com.amazon.identity.auth.device.api.authorization.ProfileScope
 import com.amazon.identity.auth.device.api.workflow.RequestContext
+import com.nice.cxonechat.UserName
 import com.nice.cxonechat.log.Logger
 import com.nice.cxonechat.log.LoggerScope
 import com.nice.cxonechat.log.debug
@@ -47,6 +53,8 @@ import com.nice.cxonechat.log.info
 import com.nice.cxonechat.log.scope
 import com.nice.cxonechat.sample.R.string
 import com.nice.cxonechat.sample.data.models.ChatAuthorization
+import com.nice.cxonechat.sample.data.models.SdkConfiguration
+import com.nice.cxonechat.sample.data.models.SdkEnvironment
 import com.nice.cxonechat.sample.ui.CartScreen
 import com.nice.cxonechat.sample.ui.ConfirmationScreen
 import com.nice.cxonechat.sample.ui.PaymentScreen
@@ -58,6 +66,7 @@ import com.nice.cxonechat.sample.utilities.PKCE
 import com.nice.cxonechat.sample.viewModel.StoreViewModel
 import com.nice.cxonechat.sample.viewModel.UiState
 import com.nice.cxonechat.sample.viewModel.UiState.UiStateContext
+import com.nice.cxonechat.ui.ChatActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -66,6 +75,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicReference
+
 
 /**
  * Store activity hosting Compose Navigation-based sample host application and integration.
@@ -98,11 +108,40 @@ class StoreActivity : ComponentActivity(), UiStateContext {
             window.setHideOverlayWindows(true)
         }
 
-        setContent {
-            AppTheme {
-                Screen()
-            }
+        storeViewModel.chatSettingsHandler.setConfiguration(
+            SdkConfiguration(
+                "BenE_MSDK",
+                SdkEnvironment(
+                    "NA1",
+                    "North America",
+                    "https://channels-de-na1.niceincontact.com/",
+                    "wss://chat-gateway-de-na1.niceincontact.com",
+                    "https://livechat-de-na1.niceincontact.com",
+                    "https://channels-de-na1.niceincontact.com/chat/"
+                ),
+                1092,
+                "chat_f37678a0-d77b-49f5-a81b-e1e255b45b59"
+            )
+        )
+
+        storeViewModel.chatSettingsHandler.setUserName(UserName("Costanza", "George"))
+
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+//
+        setContentView(R.layout.activity_store)
+
+        val fullscreenButton: Button = findViewById(R.id.fullscreen_button)
+        fullscreenButton.setOnClickListener {
+            Log.d("BEN DEBUG - START CHAT", "Hello World")
+            val intent = Intent(this@StoreActivity, ChatActivity::class.java)
+            startActivity(intent)
         }
+
+//        setContent {
+//            AppTheme {
+//                Screen()
+//            }
+//        }
     }
 
     override fun onResume() {
@@ -123,7 +162,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
     @Composable
     private fun Screen() {
         NavScreen()
-        PresentDialogs(storeViewModel.uiState.collectAsState().value)
+//        PresentDialogs(storeViewModel.uiState.collectAsState().value)
     }
 
     /**

@@ -16,6 +16,7 @@
 package com.nice.cxonechat.sample.ui
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -125,15 +126,18 @@ private class SdkConfigurationState(
     fun useConfiguration(name: String) {
         // This will have the effect of prepopulating custom configuration
         // options with value from last selected predefined configuration.
+
         if (configurationName != name && name != customConfigurationName) {
             configurations
                 .firstOrNull { it.name == name }
                 ?.also { configuration ->
+                    Log.i("BEN DEBUG", configuration.toString())
                     environment = configuration.environment.name
                     brandId = configuration.brandId.toString()
                     channelId = configuration.channelId
                 }
         }
+
         configurationName = name
     }
 
@@ -156,12 +160,14 @@ private class SdkConfigurationState(
             /* Otherwise we need the named environment to build a custom configuration */
             .firstOrNull { it.name == environment }
             ?.let {
-                SdkConfiguration(
+                val sdk_config = SdkConfiguration(
                     name = customConfigurationName,
                     environment = it.asSdkEnvironment,
                     brandId = brandId.toLong(),
                     channelId = channelId
                 )
+                Log.i("BEN DEBUG - SDK CONFIG", sdk_config.toString())
+                return sdk_config
             }
     }
 }

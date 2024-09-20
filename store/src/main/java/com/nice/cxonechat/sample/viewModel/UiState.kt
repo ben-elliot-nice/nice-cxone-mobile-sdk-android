@@ -63,19 +63,19 @@ sealed class UiState private constructor(val isInDialog: Boolean) {
 
     /** Requesting Configuration details from the user. */
     data class Configuration(private val viewModel: StoreViewModel) : UiState(isInDialog = true) {
-        @Composable
-        override fun Content(context: UiStateContext) {
-            val settings = viewModel.chatSettingsRepository.settings.collectAsState()
-            val configuration = remember { derivedStateOf { settings.value?.sdkConfiguration } }
-            val configurations = viewModel.sdkConfigurationListRepository.configurationList.collectAsState()
-
-            SdkConfigurationDialog(
-                configuration.value,
-                configurations.value,
-                { viewModel.setUiState(Prepared) },
-                viewModel.chatSettingsHandler::setConfiguration
-            )
-        }
+//        @Composable
+//        override fun Content(context: UiStateContext) {
+//            val settings = viewModel.chatSettingsRepository.settings.collectAsState()
+//            val configuration = remember { derivedStateOf { settings.value?.sdkConfiguration } }
+//            val configurations = viewModel.sdkConfigurationListRepository.configurationList.collectAsState()
+//
+//            SdkConfigurationDialog(
+//                configuration.value,
+//                configurations.value,
+//                { viewModel.setUiState(Prepared) },
+//                viewModel.chatSettingsHandler::setConfiguration
+//            )
+//        }
     }
 
     /** Preparing the chat object. */
@@ -101,20 +101,20 @@ sealed class UiState private constructor(val isInDialog: Boolean) {
     data class Login(
         private val viewModel: StoreViewModel,
     ) : UiState(isInDialog = true) {
-        @Composable
-        override fun Content(
-            context: UiStateContext,
-        ) {
-            val settings = viewModel.chatSettingsRepository.settings.collectAsState()
-            val userName = remember { derivedStateOf { settings.value?.userName } }
-
-            LoginDialog(
-                userName = userName.value,
-                onAccept = viewModel::setUserName,
-            ) {
-                viewModel.analyticsHandler.SendPageView("login", "/login")
-            }
-        }
+//        @Composable
+//        override fun Content(
+//            context: UiStateContext,
+//        ) {
+//            val settings = viewModel.chatSettingsRepository.settings.collectAsState()
+//            val userName = remember { derivedStateOf { settings.value?.userName } }
+//
+//            LoginDialog(
+//                userName = userName.value,
+//                onAccept = viewModel::setUserName,
+//            ) {
+//                viewModel.analyticsHandler.SendPageView("login", "/login")
+//            }
+//        }
     }
 
     /** Displaying the UI Settings dialog. */
