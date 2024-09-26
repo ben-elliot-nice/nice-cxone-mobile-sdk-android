@@ -40,6 +40,9 @@ sealed class UiState private constructor(val isInDialog: Boolean) {
         /** Invoke to login with the amazon OAuth provider. */
         fun loginWithAmazon()
 
+        /** Invoke to login with the amazon OAuth provider. */
+        fun loginCustom()
+
         /** Invoke to pick an image to be used as a logo in the chat windows. */
         fun pickImage(onPickImage: (String?) -> Unit)
     }
@@ -93,7 +96,7 @@ sealed class UiState private constructor(val isInDialog: Boolean) {
     data object OAuth : UiState(isInDialog = true) {
         @Composable
         override fun Content(context: UiStateContext) {
-            context.loginWithAmazon()
+            context.loginCustom()
         }
     }
 

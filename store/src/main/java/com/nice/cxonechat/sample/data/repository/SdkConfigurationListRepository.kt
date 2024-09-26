@@ -16,6 +16,7 @@
 package com.nice.cxonechat.sample.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.Stable
 import com.nice.cxonechat.sample.data.models.SdkConfigurationList
 import com.nice.cxonechat.sample.data.models.SdkConfigurations
@@ -49,10 +50,12 @@ class SdkConfigurationListRepository(
     @Stable
     fun load(): SdkConfigurations {
         return configurationList.value.ifEmpty {
+            Log.d("SdkConfigurationListRepository", "Environment Configuration is Empty")
             val configurations = super.load(context)
                 ?.configurations
                 ?: emptyList()
             configurationListStore.value = configurations
+            Log.d("SdkConfigurationListRepository", configurations.toString())
             configurations
         }
     }

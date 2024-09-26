@@ -244,6 +244,11 @@ class ChatInstanceProvider private constructor(
                     "properly configured before calling prepare."
         )
 
+        debug("configuration state: $configuration")
+        debug("Authorization state: $authorization")
+        debug("userName state: $userName")
+        debug("deviceTokenProvider state: $deviceTokenProvider")
+
         chatBuilderProvider(context, configuration, logger)
             .setChatStateListener(this@ChatInstanceProvider)
             .setDevelopmentMode(developmentMode)
