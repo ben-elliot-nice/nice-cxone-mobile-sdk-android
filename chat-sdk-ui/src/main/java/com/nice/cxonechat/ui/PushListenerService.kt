@@ -22,6 +22,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat.Builder
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -49,6 +50,7 @@ internal class PushListenerService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) = logger.scope("onNewToken") {
         super.onNewToken(token)
+        Log.d(TAG, "onNewToken: ${token}")
         val chat = chatProvider.chat
         if (chat == null) {
             verbose("No chat instance present, token not passed")
