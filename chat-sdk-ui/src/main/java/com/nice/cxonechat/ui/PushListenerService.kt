@@ -23,6 +23,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.Builder
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -77,7 +78,7 @@ internal class PushListenerService : FirebaseMessagingService() {
     private fun sendNotification(message: PushMessage) {
         val channelId = getString(string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val iconResId = if (message.iconResId == 0) R.mipmap.ic_launcher else message.iconResId
+        val iconResId = R.drawable.ic_push_icon_tran
 
         val notificationBuilder = Builder(this, channelId)
             .setSmallIcon(iconResId)
@@ -85,7 +86,8 @@ internal class PushListenerService : FirebaseMessagingService() {
             .setContentText(message.message)
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
-            .setPriority(2)
+            .setPriority(NotificationCompat.PRIORITY_HIGH) // For Android versions < 8 (Oreo)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         message.deepLink?.let {
             PendingIntent.getActivity(
