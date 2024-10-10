@@ -28,6 +28,7 @@ internal object DefaultColors {
     private val cornflower_blue_two = Color(0xFF4F62D7)
     private val dark_gray_two = Color(0xFF191A1B)
     private val virgin_red = Color(0xFFE10A0A)
+    private val anz_blue = Color(0xFF004165)
 
     val light = ThemeColors(
         primary = purple_500,
@@ -38,7 +39,7 @@ internal object DefaultColors {
         onAccent = black,
         agentBackground = light_background,
         agentText = black,
-        customerBackground = virgin_red,
+        customerBackground = anz_blue,
         customerText = white,
     )
 
@@ -51,7 +52,7 @@ internal object DefaultColors {
         onAccent = white,
         agentBackground = dark_background,
         agentText = gray_light,
-        customerBackground = virgin_red,
+        customerBackground = anz_blue,
         customerText = white,
     )
 }

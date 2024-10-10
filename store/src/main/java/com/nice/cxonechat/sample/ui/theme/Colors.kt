@@ -70,6 +70,8 @@ object Colors {
     private val cornflower_blue_two = Color(0xFF4F62D7)
     private val dark_gray_two = Color(0xFF191A1B)
     private val virgin_red = Color(0xFFE10A0A)
+    private val anz_blue = Color(0xFF004165)
+    private val anz_light_blue = Color(0xFF0072ac)
     private val virgin_agent = Color(0xFFF3F3F3)
 
 
@@ -79,11 +81,11 @@ object Colors {
         override val onPrimary = black
         override val background = white
         override val onBackground = black
-        override val accent = teal_200
-        override val onAccent = black
+        override val accent = anz_light_blue
+        override val onAccent = white
         override val agentBackground = virgin_agent
         override val agentText = dark_gray_two
-        override val customerBackground = virgin_red
+        override val customerBackground = anz_blue
         override val customerText = white
     }
 
@@ -93,11 +95,11 @@ object Colors {
         override val onPrimary = black
         override val background = dark_gray_two
         override val onBackground = white
-        override val accent = teal_200
+        override val accent = anz_light_blue
         override val onAccent = white
         override val agentBackground = virgin_agent
         override val agentText = gray_light
-        override val customerBackground = virgin_red
+        override val customerBackground = anz_blue
         override val customerText = white
     }
 }
