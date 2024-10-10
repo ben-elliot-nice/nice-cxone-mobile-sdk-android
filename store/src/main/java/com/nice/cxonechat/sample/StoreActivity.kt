@@ -120,7 +120,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
                     "https://channels-de-na1.niceincontact.com/chat/"
                 ),
                 1092,
-                "chat_f37678a0-d77b-49f5-a81b-e1e255b45b59"
+                "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8"
             )
         )
 
