@@ -107,8 +107,12 @@ class StoreActivity : ComponentActivity(), UiStateContext {
         if (VERSION.SDK_INT >= VERSION_CODES.S) {
             window.setHideOverlayWindows(true)
         }
-
-        storeViewModel.chatSettingsHandler.setConfiguration(
+        val repo = storeViewModel.chatSettingsRepository.settings.value
+        Log.e("StoreActivity", storeViewModel.chatSettingsRepository.settings.value.toString())
+        Log.e("StoreActivity", repo?.sdkConfiguration?.channelId.toString())
+        if (repo == null || repo.sdkConfiguration?.channelId == "chat_ee43b3c8-c7dc-42ae-83d9-1f2f15553e6a") {
+            Log.e("StoreActivity", "Triggered Settings Load")
+            storeViewModel.chatSettingsHandler.setConfiguration(
 //            SdkConfiguration(
 //                "BenE_MSDK",
 //                SdkEnvironment(
@@ -122,20 +126,23 @@ class StoreActivity : ComponentActivity(), UiStateContext {
 //                1092,
 //                "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8"
 //            )
-            SdkConfiguration(
-                "MHan_ANZ_Bank_Demo",
-                SdkEnvironment(
-                    "NA1",
-                    "North America",
-                    "https://channels-de-na1.niceincontact.com/",
-                    "wss://chat-gateway-de-na1.niceincontact.com",
-                    "https://livechat-de-na1.niceincontact.com",
-                    "https://channels-de-na1.niceincontact.com/chat/"
-                ),
-                1092,
-                "chat_9fe985f3-e568-4a7f-995b-6e3c3b9be265"
+                SdkConfiguration(
+                    "MHan_ANZ_Bank_Demo",
+                    SdkEnvironment(
+                        "NA1",
+                        "North America",
+                        "https://channels-de-na1.niceincontact.com/",
+                        "wss://chat-gateway-de-na1.niceincontact.com",
+                        "https://livechat-de-na1.niceincontact.com",
+                        "https://channels-de-na1.niceincontact.com/chat/"
+                    ),
+                    1092,
+                    "chat_9fe985f3-e568-4a7f-995b-6e3c3b9be265"
+                )
             )
-        )
+        }
+
+
 
         storeViewModel.chatSettingsHandler.setUserName(UserName("Elliot", "Ben"))
 
