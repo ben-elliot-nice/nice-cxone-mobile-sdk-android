@@ -109,8 +109,21 @@ class StoreActivity : ComponentActivity(), UiStateContext {
         }
 
         storeViewModel.chatSettingsHandler.setConfiguration(
+//            SdkConfiguration(
+//                "BenE_MSDK",
+//                SdkEnvironment(
+//                    "NA1",
+//                    "North America",
+//                    "https://channels-de-na1.niceincontact.com/",
+//                    "wss://chat-gateway-de-na1.niceincontact.com",
+//                    "https://livechat-de-na1.niceincontact.com",
+//                    "https://channels-de-na1.niceincontact.com/chat/"
+//                ),
+//                1092,
+//                "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8"
+//            )
             SdkConfiguration(
-                "BenE_MSDK",
+                "MHan_ANZ_Bank_Demo",
                 SdkEnvironment(
                     "NA1",
                     "North America",
@@ -120,11 +133,11 @@ class StoreActivity : ComponentActivity(), UiStateContext {
                     "https://channels-de-na1.niceincontact.com/chat/"
                 ),
                 1092,
-                "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8"
+                "chat_9fe985f3-e568-4a7f-995b-6e3c3b9be265"
             )
         )
 
-        storeViewModel.chatSettingsHandler.setUserName(UserName("Costanza", "George"))
+        storeViewModel.chatSettingsHandler.setUserName(UserName("Elliot", "Ben"))
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 //

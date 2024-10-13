@@ -94,7 +94,8 @@ internal class PushListenerService : FirebaseMessagingService() {
                 this,
                 0,
                 Intent(Intent.ACTION_VIEW, Uri.parse(it)),
-                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+//                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+                 PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         }?.also(notificationBuilder::setContentIntent)
 
