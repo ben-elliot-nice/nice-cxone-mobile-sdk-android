@@ -61,6 +61,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -341,7 +342,7 @@ private fun UserInputSelector(
         val border = if (!sendMessageEnabled) {
             BorderStroke(
                 width = 1.dp,
-                color = ChatTheme.colors.onSurface.copy(alpha = 0.3f)
+                color = Color(0xFF0072ac).copy(alpha = 0.3f)
             )
         } else {
             null
@@ -395,7 +396,8 @@ private fun SendButton(
     ) {
         Icon(
             imageVector = AutoMirrored.Outlined.Send,
-            contentDescription = stringResource(string.text_send)
+            contentDescription = stringResource(string.text_send),
+            tint = Color(0xFF0072ac)
         )
     }
 }
