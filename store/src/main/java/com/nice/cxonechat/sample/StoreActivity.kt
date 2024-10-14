@@ -16,10 +16,15 @@
 package com.nice.cxonechat.sample
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.WindowInsetsController
+import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.PickVisualMediaRequest
@@ -39,6 +44,7 @@ import com.amazon.identity.auth.device.api.authorization.AuthorizeRequest
 import com.amazon.identity.auth.device.api.authorization.AuthorizeResult
 import com.amazon.identity.auth.device.api.authorization.ProfileScope
 import com.amazon.identity.auth.device.api.workflow.RequestContext
+import com.nice.cxonechat.UserName
 import com.nice.cxonechat.log.Logger
 import com.nice.cxonechat.log.LoggerScope
 import com.nice.cxonechat.log.debug
@@ -47,6 +53,8 @@ import com.nice.cxonechat.log.info
 import com.nice.cxonechat.log.scope
 import com.nice.cxonechat.sample.R.string
 import com.nice.cxonechat.sample.data.models.ChatAuthorization
+import com.nice.cxonechat.sample.data.models.SdkConfiguration
+import com.nice.cxonechat.sample.data.models.SdkEnvironment
 import com.nice.cxonechat.sample.ui.CartScreen
 import com.nice.cxonechat.sample.ui.ConfirmationScreen
 import com.nice.cxonechat.sample.ui.PaymentScreen
@@ -58,6 +66,7 @@ import com.nice.cxonechat.sample.utilities.PKCE
 import com.nice.cxonechat.sample.viewModel.StoreViewModel
 import com.nice.cxonechat.sample.viewModel.UiState
 import com.nice.cxonechat.sample.viewModel.UiState.UiStateContext
+import com.nice.cxonechat.ui.ChatActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -98,11 +107,59 @@ class StoreActivity : ComponentActivity(), UiStateContext {
             window.setHideOverlayWindows(true)
         }
 
-        setContent {
-            AppTheme {
-                Screen()
-            }
+        val repo = storeViewModel.chatSettingsRepository.settings.value
+        Log.e("StoreActivity", storeViewModel.chatSettingsRepository.settings.value.toString())
+        Log.e("StoreActivity", repo?.sdkConfiguration?.channelId.toString())
+        if (repo == null || repo.sdkConfiguration?.channelId == "chat_ee43b3c8-c7dc-42ae-83d9-1f2f15553e6a") {
+            Log.e("StoreActivity", "Triggered Settings Load")
+            storeViewModel.chatSettingsHandler.setConfiguration(
+//            SdkConfiguration(
+//                "BenE_MSDK",
+//                SdkEnvironment(
+//                    "NA1",
+//                    "North America",
+//                    "https://channels-de-na1.niceincontact.com/",
+//                    "wss://chat-gateway-de-na1.niceincontact.com",
+//                    "https://livechat-de-na1.niceincontact.com",
+//                    "https://channels-de-na1.niceincontact.com/chat/"
+//                ),
+//                1092,
+//                "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8"
+//            )
+                SdkConfiguration(
+                    "MHan_ANZ_Bank_Demo",
+                    SdkEnvironment(
+                        "NA1",
+                        "North America",
+                        "https://channels-de-na1.niceincontact.com/",
+                        "wss://chat-gateway-de-na1.niceincontact.com",
+                        "https://livechat-de-na1.niceincontact.com",
+                        "https://channels-de-na1.niceincontact.com/chat/"
+                    ),
+                    1092,
+                    "chat_9fe985f3-e568-4a7f-995b-6e3c3b9be265"
+                )
+            )
         }
+
+        storeViewModel.chatProvider.setUserName(UserName("Elliot", "Ben"))
+
+//        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+//
+        setContentView(R.layout.activity_store)
+
+        val fullscreenButton: Button = findViewById(R.id.fullscreen_button)
+        fullscreenButton.setOnClickListener {
+            Log.d("BEN DEBUG - START CHAT", "Hello World")
+            val intent = Intent(this@StoreActivity, ChatActivity::class.java)
+            startActivity(intent)
+        }
+
+//        setContent {
+//            AppTheme {
+//                Screen()
+//            }
+//        }
     }
 
     override fun onResume() {
