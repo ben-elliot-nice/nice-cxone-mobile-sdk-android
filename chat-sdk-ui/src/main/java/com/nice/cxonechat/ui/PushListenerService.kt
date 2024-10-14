@@ -75,7 +75,7 @@ internal class PushListenerService : FirebaseMessagingService() {
     private fun sendNotification(message: PushMessage) {
         val channelId = getString(string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val iconResId = if (message.iconResId == 0) R.mipmap.ic_launcher else message.iconResId
+        val iconResId = R.drawable.ic_push_icon_trans
 
         val notificationBuilder = Builder(this, channelId)
             .setSmallIcon(iconResId)
@@ -83,7 +83,6 @@ internal class PushListenerService : FirebaseMessagingService() {
             .setContentText(message.message)
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
-            .setPriority(2)
 
         val pendingIntent = message.deepLink?.let {
             PendingIntent.getActivity(
@@ -106,7 +105,7 @@ internal class PushListenerService : FirebaseMessagingService() {
             val channel = NotificationChannel(
                 channelId,
                 getString(string.notification_channel_title),
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(channel)
         }
