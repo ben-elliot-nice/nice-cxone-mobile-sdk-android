@@ -292,7 +292,7 @@ private fun RowScope.UserInputText(
             keyboardActions = KeyboardActions(
                 onSend = { onSend() }
             ),
-            maxLines = 1,
+            maxLines = 2,
             cursorBrush = SolidColor(LocalContentColor.current),
             textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current)
         )
