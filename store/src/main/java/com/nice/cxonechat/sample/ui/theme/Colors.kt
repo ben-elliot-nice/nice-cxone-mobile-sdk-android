@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2023. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -69,32 +69,37 @@ object Colors {
     private val light_background = Color(0xFFFFFFFF)
     private val cornflower_blue_two = Color(0xFF4F62D7)
     private val dark_gray_two = Color(0xFF191A1B)
+    private val virgin_red = Color(0xFFE10A0A)
+    private val anz_blue = Color(0xFF004165)
+    private val anz_light_blue = Color(0xFF0072ac)
+    private val virgin_agent = Color(0xFFF3F3F3)
+
 
     /** default colors to use in light mode. */
     object Light: DefaultColors {
-        override val primary = purple_500
-        override val onPrimary = white
+        override val primary = white
+        override val onPrimary = black
         override val background = white
         override val onBackground = black
-        override val accent = teal_200
-        override val onAccent = black
-        override val agentBackground = light_background
+        override val accent = anz_light_blue
+        override val onAccent = white
+        override val agentBackground = virgin_agent
         override val agentText = dark_gray_two
-        override val customerBackground = cornflower_blue_two
+        override val customerBackground = anz_blue
         override val customerText = white
     }
 
     /** default colors to use in dark mode. */
     object Dark: DefaultColors {
-        override val primary = purple_500
-        override val onPrimary = white
-        override val background = dark_gray_two
-        override val onBackground = white
-        override val accent = teal_200
+        override val primary = white
+        override val onPrimary = black
+        override val background = white
+        override val onBackground = black
+        override val accent = anz_light_blue
         override val onAccent = white
-        override val agentBackground = dark_background
-        override val agentText = gray_light
-        override val customerBackground = cornflower_blue_two
+        override val agentBackground = virgin_agent
+        override val agentText = dark_gray_two
+        override val customerBackground = anz_blue
         override val customerText = white
     }
 }
