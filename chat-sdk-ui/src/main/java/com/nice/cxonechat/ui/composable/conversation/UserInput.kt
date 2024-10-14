@@ -235,11 +235,11 @@ private fun Header() {
     Row(
         modifier = Modifier
             .height(24.dp)
-            .padding(vertical = space.medium, horizontal = space.large)
+            .padding(vertical = space.small, horizontal = space.small)
     ) {
         Divider(
             modifier = Modifier
-                .weight(1f)
+                .weight(0.1f)
                 .align(Alignment.CenterVertically)
         )
     }
@@ -290,7 +290,7 @@ private fun RowScope.UserInputText(
             keyboardActions = KeyboardActions(
                 onSend = { onSend() }
             ),
-            maxLines = 1,
+            maxLines = 4,
             cursorBrush = SolidColor(LocalContentColor.current),
             textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current)
         )
