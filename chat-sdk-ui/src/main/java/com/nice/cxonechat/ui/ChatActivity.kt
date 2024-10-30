@@ -309,44 +309,49 @@ class ChatActivity : AppCompatActivity() {
                 // configured by the provider.
                 Initial -> chatViewModel.prepare(applicationContext)
 
-                Preparing -> chatStateSnackbar = Snackbar.make(
-                    binding.root,
-                    getString(string.preparing_sdk),
-                    Snackbar.LENGTH_INDEFINITE
-                ).setAction(string.chat_state_connecting_action_cancel) {
-                    finish()
-                }.apply(Snackbar::show)
+                Preparing -> null
+//                Preparing -> chatStateSnackbar = Snackbar.make(
+//                    binding.root,
+//                    getString(string.preparing_sdk),
+//                    Snackbar.LENGTH_INDEFINITE
+//                ).setAction(string.chat_state_connecting_action_cancel) {
+//                    finish()
+//                }.apply(Snackbar::show)
 
                 // if the chat is (or becomes) prepared, then start a connect attempt
                 Prepared -> if (!closing) {
                     chatViewModel.connect()
                 }
 
-                Connecting -> chatStateSnackbar = Snackbar.make(
-                    binding.root,
-                    getString(string.chat_state_connecting),
-                    Snackbar.LENGTH_INDEFINITE
-                ).setAction(string.chat_state_connecting_action_cancel) {
-                    finish()
-                }.apply(Snackbar::show)
+                Connecting -> null
+//                Connecting -> chatStateSnackbar = Snackbar.make(
+//                    binding.root,
+//                    getString(string.chat_state_connecting),
+//                    Snackbar.LENGTH_INDEFINITE
+//                ).setAction(string.chat_state_connecting_action_cancel) {
+//                    finish()
+//                }.apply(Snackbar::show)
 
-                Connected -> chatStateSnackbar = Snackbar.make(
-                    binding.root,
-                    string.chat_state_connected,
-                    Snackbar.LENGTH_SHORT
-                ).apply(Snackbar::show)
+                Connected -> null
+//                Connected -> chatStateSnackbar = Snackbar.make(
+//                    binding.root,
+//                    string.chat_state_connected,
+//                    Snackbar.LENGTH_SHORT
+//                ).apply(Snackbar::show)
 
-                Ready -> chatStateSnackbar = Snackbar.make(
-                    binding.root,
-                    "SDK ready",
-                    Snackbar.LENGTH_SHORT
-                ).apply(Snackbar::show)
+                Ready -> null
+//                Ready -> chatStateSnackbar = Snackbar.make(
+//                    binding.root,
+//                    "SDK ready",
+//                    Snackbar.LENGTH_SHORT
+//                ).apply(Snackbar::show)
 
-                Offline -> chatStateSnackbar = Snackbar.make(
-                    binding.root,
-                    "SDK OFFLINE",
-                    Snackbar.LENGTH_SHORT
-                )
+                Offline -> null
+//                Offline -> chatStateSnackbar = Snackbar.make(
+//                    binding.root,
+//                    "SDK OFFLINE",
+//                    Snackbar.LENGTH_SHORT
+//                )
 
                 ConnectionLost -> chatStateSnackbar = Snackbar.make(
                     binding.root,
