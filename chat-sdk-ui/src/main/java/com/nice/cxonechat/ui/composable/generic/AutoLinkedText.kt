@@ -50,7 +50,7 @@ internal fun autoLinkedText(
     Factory.getInstance()
         .newSpannable(text)
         .also {
-            LinkifyCompat.addLinks(it, Linkify.WEB_URLS or Linkify.EMAIL_ADDRESSES or Linkify.PHONE_NUMBERS)
+            LinkifyCompat.addLinks(it, Linkify.WEB_URLS or Linkify.EMAIL_ADDRESSES)
         }
 )
 
