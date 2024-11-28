@@ -75,7 +75,7 @@ internal class PushListenerService : FirebaseMessagingService() {
     private fun sendNotification(message: PushMessage) {
         val channelId = getString(string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val iconResId = R.drawable.ic_push_icon_trans
+        val iconResId = R.drawable.nzhg_logo_trans
 
         val notificationBuilder = Builder(this, channelId)
             .setSmallIcon(iconResId)

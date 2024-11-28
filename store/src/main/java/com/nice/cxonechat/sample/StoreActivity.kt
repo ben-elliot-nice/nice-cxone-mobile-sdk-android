@@ -114,7 +114,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
             Log.e("StoreActivity", "Triggered Settings Load")
             storeViewModel.chatSettingsHandler.setConfiguration(
                 SdkConfiguration(
-                    "BenE_MSDK",
+                    "BenE_APK",
                     SdkEnvironment(
                         "NA1",
                         "North America",
@@ -124,8 +124,21 @@ class StoreActivity : ComponentActivity(), UiStateContext {
                         "https://channels-de-na1.niceincontact.com/chat/"
                     ),
                     1092,
-                    "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8"
+                    "chat_1900d753-261e-42d9-9faa-32c3328aeb10"
                 )
+//                SdkConfiguration(
+//                    "BenE_MSDK",
+//                    SdkEnvironment(
+//                        "NA1",
+//                        "North America",
+//                        "https://channels-de-na1.niceincontact.com/",
+//                        "wss://chat-gateway-de-na1.niceincontact.com",
+//                        "https://livechat-de-na1.niceincontact.com",
+//                        "https://channels-de-na1.niceincontact.com/chat/"
+//                    ),
+//                    1092,
+//                    "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8"
+//                )
             )
 //                SdkConfiguration(
 //                    "MHan_ANZ_Bank_Demo",
