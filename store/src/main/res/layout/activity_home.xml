@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/anz_home" />
+        android:src="@drawable/airnz_home" />
 
     <Button
         android:id="@+id/invisible_button"

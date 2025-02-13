@@ -40,6 +40,12 @@
         android:useEmbeddedDex="true"
         android:allowAudioPlaybackCapture="false"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_push_icon_trans" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/black" />
         <provider android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
