@@ -101,7 +101,7 @@
     <string name="background_thread_updated">New message in background thread %1$s</string>
 
     <string name="archive_thread_content_description">Archive Thread</string>
-    <string name="thread_list_title">Optus</string>
+    <string name="thread_list_title">Westpac</string>
 
     <string name="hint_enter_a_message">Type a message…</string>
     <string name="text_agent_typing">Agent is typing…</string>

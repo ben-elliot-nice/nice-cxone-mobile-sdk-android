@@ -124,7 +124,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
                         "https://channels-de-na1.niceincontact.com/chat/"
                     ),
                     1092,
-                    "chat_03b46cc1-f56f-40ec-be52-538154acb5c9"
+                    "chat_8d08d328-771b-45d6-a9c9-520bf643710d"
                 )
             )
 //                SdkConfiguration(
