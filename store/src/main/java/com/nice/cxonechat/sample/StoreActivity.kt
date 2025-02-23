@@ -110,7 +110,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
         val repo = storeViewModel.chatSettingsRepository.settings.value
         Log.e("StoreActivity", storeViewModel.chatSettingsRepository.settings.value.toString())
         Log.e("StoreActivity", repo?.sdkConfiguration?.channelId.toString())
-        if (repo == null || repo.sdkConfiguration?.channelId == "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8") {
+        if (repo == null || repo.sdkConfiguration?.channelId == "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8" || repo.sdkConfiguration?.channelId == "chat_9ce7718a-c7e6-4302-bb98-9cfb203f05e5") {
             Log.e("StoreActivity", "Triggered Settings Load")
             storeViewModel.chatSettingsHandler.setConfiguration(
                 SdkConfiguration(
@@ -124,7 +124,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
                         "https://channels-de-na1.niceincontact.com/chat/"
                     ),
                     1092,
-                    "chat_9ce7718a-c7e6-4302-bb98-9cfb203f05e5"
+                    "chat_03b46cc1-f56f-40ec-be52-538154acb5c9"
                 )
             )
 //                SdkConfiguration(

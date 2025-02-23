@@ -14,8 +14,8 @@
   -->
 
 <resources>
-    <string name="app_name">Demo Air NZ</string>
-    <string name="title_activity_store_front">Demo Air NZ</string>
+    <string name="app_name">MyOptus App</string>
+    <string name="title_activity_store_front">MyOptus App</string>
     <string name="add_to_cart">Add to Cart</string>
     <string name="shopping_cart">Shopping Cart</string>
     <string name="continue_button">Continue</string>
