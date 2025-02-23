@@ -15,7 +15,6 @@
 
 package com.nice.cxonechat.internal.model
 
-import com.google.gson.annotations.SerializedName
 import com.nice.cxonechat.internal.model.MessageDirectionModel.ToAgent
 import com.nice.cxonechat.internal.model.MessageDirectionModel.ToClient
 import com.nice.cxonechat.internal.model.network.MessagePolyContent
@@ -26,42 +25,78 @@ import com.nice.cxonechat.internal.model.network.MessagePolyContent.RichLink
 import com.nice.cxonechat.internal.model.network.MessagePolyContent.Text
 import com.nice.cxonechat.internal.model.network.UserStatistics
 import com.nice.cxonechat.message.MessageAuthor
+import com.nice.cxonechat.util.IsoDate
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.util.Date
 import java.util.UUID
 
+@Serializable
 internal data class MessageModel(
-    @SerializedName("idOnExternalPlatform")
+    @SerialName("idOnExternalPlatform")
+    @Contextual
     val idOnExternalPlatform: UUID,
 
-    @SerializedName("threadIdOnExternalPlatform")
+    @SerialName("threadIdOnExternalPlatform")
+    @Contextual
     val threadIdOnExternalPlatform: UUID,
 
-    @SerializedName("messageContent")
+    @SerialName("messageContent")
     val messageContent: MessagePolyContent,
 
-    @SerializedName("createdAt")
-    val createdAt: Date,
+    @SerialName("createdAtWithMilliseconds")
+    @Contextual
+    private val createdAtWithMilliseconds: IsoDate? = null,
+    @SerialName("createdAt")
+    @Contextual
+    private val createdAtWithSeconds: Date,
 
-    @SerializedName("attachments")
+    @SerialName("attachments")
     val attachments: List<AttachmentModel>,
 
-    @SerializedName("direction")
+    @SerialName("direction")
     val direction: MessageDirectionModel,
 
-    @SerializedName("userStatistics")
+    @SerialName("userStatistics")
     val userStatistics: UserStatistics,
 
-    @SerializedName("authorUser")
+    @SerialName("authorUser")
     val authorUser: AgentModel? = null,
 
-    @SerializedName("authorEndUserIdentity")
+    @SerialName("authorEndUserIdentity")
     val authorEndUserIdentity: CustomerIdentityModel? = null,
 ) {
+    val createdAt: Date get() = createdAtWithMilliseconds?.date ?: createdAtWithSeconds
+
     val author: MessageAuthor?
         get() = when (direction) {
             ToAgent -> authorEndUserIdentity?.toMessageAuthor()
             ToClient -> authorUser?.toMessageAuthor()
         }
+
+    internal constructor(
+        idOnExternalPlatform: UUID,
+        threadIdOnExternalPlatform: UUID,
+        messageContent: MessagePolyContent,
+        createdAt: Date,
+        attachments: List<AttachmentModel>,
+        direction: MessageDirectionModel,
+        userStatistics: UserStatistics,
+        authorUser: AgentModel? = null,
+        authorEndUserIdentity: CustomerIdentityModel? = null,
+    ) : this(
+        idOnExternalPlatform,
+        threadIdOnExternalPlatform,
+        messageContent,
+        IsoDate(createdAt),
+        createdAt,
+        attachments,
+        direction,
+        userStatistics,
+        authorUser,
+        authorEndUserIdentity
+    )
 
     fun toMessage() = when (messageContent) {
         is Text -> MessageText(this)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024. NICE Ltd. All rights reserved.
+ * Copyright (c) 2021-2025. NICE Ltd. All rights reserved.
  *
  * Licensed under the NICE License;
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import com.nice.cxonechat.message.OutboundMessage
 import com.nice.cxonechat.prechat.PreChatSurvey
 import com.nice.cxonechat.thread.Agent
 import com.nice.cxonechat.thread.ChatThread
+import com.nice.cxonechat.thread.ChatThreadState
 import com.nice.cxonechat.thread.CustomField
 import com.nice.cxonechat.ui.customvalues.CustomValueItemList
 import com.nice.cxonechat.ui.customvalues.extractStringValues
@@ -57,8 +58,8 @@ import com.nice.cxonechat.ui.main.ChatThreadViewModel.Dialogs.CustomValues
 import com.nice.cxonechat.ui.main.ChatThreadViewModel.Dialogs.EditThreadName
 import com.nice.cxonechat.ui.main.ChatThreadViewModel.Dialogs.None
 import com.nice.cxonechat.ui.main.ChatThreadViewModel.Dialogs.SelectAttachments
-import com.nice.cxonechat.ui.main.ChatThreadViewModel.OnPopupActionState.Empty
-import com.nice.cxonechat.ui.main.ChatThreadViewModel.OnPopupActionState.ReceivedOnPopupAction
+import com.nice.cxonechat.ui.main.ChatThreadViewModel.PopupActionState.Empty
+import com.nice.cxonechat.ui.main.ChatThreadViewModel.PopupActionState.ReceivedPopupAction
 import com.nice.cxonechat.ui.main.ChatThreadViewModel.ReportOnPopupAction.Clicked
 import com.nice.cxonechat.ui.main.ChatThreadViewModel.ReportOnPopupAction.Displayed
 import com.nice.cxonechat.ui.main.ChatThreadViewModel.ReportOnPopupAction.Failure
@@ -76,11 +77,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
@@ -106,8 +109,19 @@ internal class ChatThreadViewModel(
         get() = threads.preChatSurvey
     val hasQuestions: Boolean
         get() = preChatSurvey?.fields?.isEmpty() == false
-    val chatThreadHandler = selectedThreadRepository.chatThreadHandlerFlow
-    private val chatThreadFlow: Flow<ChatThread> = chatThreadHandler.flatMapLatest { it.flow }
+    val chatThreadHandler = selectedThreadRepository
+        .chatThreadHandlerFlow
+        .shareIn(viewModelScope, SharingStarted.Eagerly, 1)
+
+    private val chatThreadFlow = chatThreadHandler
+        .flatMapLatest { it.flow }
+        .onEach { newThread ->
+            val sentMessageThreadId = sentMessagesFlow.firstOrNull()?.asIterable()?.firstOrNull()?.value?.threadId
+            if (newThread.id != sentMessageThreadId) {
+                sentMessagesFlow.value = emptyMap()
+            }
+        }
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(), 1)
 
     /** Tracks messages before they are confirmed as received by backend. */
     private val sentMessagesFlow: MutableStateFlow<Map<UUID, SdkMessage>> = MutableStateFlow(emptyMap())
@@ -148,12 +162,12 @@ internal class ChatThreadViewModel(
         .map { it.hasMoreMessagesToLoad }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
-    private val mutableActionState: MutableStateFlow<OnPopupActionState> = MutableStateFlow(Empty)
+    private val mutableActionState: MutableStateFlow<PopupActionState> = MutableStateFlow(Empty)
     private val actionHandler = chat.actions()
     private val messageHandler = chatThreadHandler.mapLatest(ChatThreadHandler::messages)
     private val eventHandler = chatThreadHandler.mapLatest(ChatThreadHandler::events)
 
-    val actionState: StateFlow<OnPopupActionState> = mutableActionState.asStateFlow()
+    val actionState: StateFlow<PopupActionState> = mutableActionState.asStateFlow()
 
     val customValues: List<CustomField>
         get() = selectedThreadRepository.chatThreadHandler?.get()?.fields ?: listOf()
@@ -164,10 +178,20 @@ internal class ChatThreadViewModel(
     val isArchived: StateFlow<Boolean> = chatThreadFlow
         .mapLatest { !it.canAddMoreMessages }
         .distinctUntilChanged()
-        .onEach {
-            if (it && isLiveChat) showEndContactDialog()
+        .onEach { isArchived ->
+            if (isLiveChat) {
+                if (isArchived) {
+                    showEndContactDialog()
+                } else if (Dialogs.EndContact == dialogShown.value) {
+                    dismissDialog()
+                }
+            }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
+
+    val threadStateFlow: StateFlow<ChatThreadState> = chatThreadFlow
+        .mapLatest { it.threadState }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ChatThreadState.Pending)
 
     val maxAttachmentSize: Int
         get() = chat.configuration.fileRestrictions.allowedFileSize
@@ -214,7 +238,7 @@ internal class ChatThreadViewModel(
 
     init {
         val listener = OnPopupActionListener { variables, metadata ->
-            mutableActionState.value = ReceivedOnPopupAction(variables, metadata)
+            mutableActionState.value = ReceivedPopupAction(variables, metadata)
         }
         actionHandler.onPopup(listener)
     }
@@ -315,17 +339,17 @@ internal class ChatThreadViewModel(
         }
     }
 
-    fun reportOnPopupActionDisplayed(action: ReceivedOnPopupAction) {
+    fun reportOnPopupActionDisplayed(action: ReceivedPopupAction) {
         chat.events().proactiveActionDisplay(action.metadata)
     }
 
-    fun reportOnPopupActionClicked(action: ReceivedOnPopupAction) {
+    fun reportOnPopupActionClicked(action: ReceivedPopupAction) {
         chat.events().proactiveActionClick(action.metadata)
     }
 
     fun reportOnPopupAction(
         reportType: ReportOnPopupAction,
-        action: ReceivedOnPopupAction,
+        action: ReceivedPopupAction,
     ) {
         val events = chat.events()
         when (reportType) {
@@ -343,7 +367,7 @@ internal class ChatThreadViewModel(
         }
     }
 
-    private fun clearOnPopupAction(action: ReceivedOnPopupAction) {
+    private fun clearOnPopupAction(action: ReceivedPopupAction) {
         if (mutableActionState.value == action) {
             mutableActionState.value = Empty
         }
@@ -425,9 +449,21 @@ internal class ChatThreadViewModel(
         showDialog(Dialogs.EndContact)
     }
 
-    sealed interface OnPopupActionState {
-        object Empty : OnPopupActionState
-        data class ReceivedOnPopupAction(val variables: Any, val metadata: ActionMetadata) : OnPopupActionState
+    internal sealed interface PopupActionState {
+        data object Empty : PopupActionState
+        data class ReceivedPopupAction(
+            override val variables: Map<String, Any?>,
+            val metadata: ActionMetadata,
+        ) : PopupActionState, PopupActionData
+
+        data class PreviewPopupAction(
+            override val variables: Map<String, Any?>,
+            val metadata: Any,
+        ) : PopupActionState, PopupActionData
+
+        sealed interface PopupActionData {
+            val variables: Map<String, Any?>
+        }
     }
 
     enum class ReportOnPopupAction {
@@ -472,7 +508,7 @@ private data class TemporarySentMessage(
             override val status: MessageStatus = Sending
         },
         author = object : MessageAuthor() {
-            override val id: String = ChatThreadFragment.SENDER_ID
+            override val id: String = SENDER_ID
             override val firstName: String = ""
             override val lastName: String = ""
             override val imageUrl: String? = null
@@ -493,7 +529,7 @@ private data class TemporarySentMessage(
             override val status: MessageStatus = Sending
         },
         author = object : MessageAuthor() {
-            override val id: String = ChatThreadFragment.SENDER_ID
+            override val id: String = SENDER_ID
             override val firstName: String = ""
             override val lastName: String = ""
             override val imageUrl: String? = null
@@ -502,4 +538,8 @@ private data class TemporarySentMessage(
         fallbackText = null,
         text = text
     )
+
+    private companion object {
+        private const val SENDER_ID = "com.cxone.chat.message.sender.1"
+    }
 }

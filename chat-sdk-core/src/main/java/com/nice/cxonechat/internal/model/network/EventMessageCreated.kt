@@ -15,17 +15,21 @@
 
 package com.nice.cxonechat.internal.model.network
 
-import com.google.gson.annotations.SerializedName
+import com.nice.cxonechat.enums.ContactStatus
 import com.nice.cxonechat.enums.EventType.MessageCreated
 import com.nice.cxonechat.internal.model.Contact
 import com.nice.cxonechat.internal.model.MessageModel
 import com.nice.cxonechat.internal.model.Thread
 import com.nice.cxonechat.internal.socket.EventCallback.ReceivedEvent
 import com.nice.cxonechat.thread.ChatThread
+import com.nice.cxonechat.thread.ChatThreadState
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /** Event Received when a message has been successfully sent/created. */
+@Serializable
 internal data class EventMessageCreated(
-    @SerializedName("data")
+    @SerialName("data")
     val data: Data,
 ) {
 
@@ -37,14 +41,22 @@ internal data class EventMessageCreated(
 
     val message get() = data.message.toMessage()
 
+    val threadState
+        get() = if (contactStatus === ContactStatus.Closed) {
+            ChatThreadState.Closed
+        } else {
+            ChatThreadState.Ready
+        }
+
     fun inThread(thread: ChatThread): Boolean = thread.id == threadId
 
+    @Serializable
     data class Data(
-        @SerializedName("case")
+        @SerialName("case")
         val case: Contact,
-        @SerializedName("thread")
+        @SerialName("thread")
         val thread: Thread,
-        @SerializedName("message")
+        @SerialName("message")
         val message: MessageModel,
     )
 

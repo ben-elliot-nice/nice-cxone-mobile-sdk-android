@@ -19,6 +19,7 @@ import com.nice.cxonechat.Cancellable
 import com.nice.cxonechat.ChatThreadHandler
 import com.nice.cxonechat.ChatThreadsHandler
 import com.nice.cxonechat.ChatThreadsHandler.OnThreadsUpdatedListener
+import com.nice.cxonechat.enums.ContactStatus
 import com.nice.cxonechat.enums.ErrorType.RecoveringLivechatFailed
 import com.nice.cxonechat.enums.EventType
 import com.nice.cxonechat.enums.EventType.LivechatRecovered
@@ -33,8 +34,6 @@ import com.nice.cxonechat.internal.model.network.EventLiveChatThreadRecovered
 import com.nice.cxonechat.internal.socket.ErrorCallback.Companion.addErrorCallback
 import com.nice.cxonechat.internal.socket.EventCallback.Companion.addCallback
 import com.nice.cxonechat.thread.ChatThread
-import com.nice.cxonechat.thread.ChatThreadState.Loaded
-import com.nice.cxonechat.thread.ChatThreadState.Ready
 
 internal class ChatThreadsHandlerLive(
     private val chat: ChatWithParameters,
@@ -97,12 +96,12 @@ internal class ChatThreadsHandlerLive(
                 tmpThreadHandlerRef = null
             }
         }
-        val recovered = if (eventThread == null || !eventThread.canAddMoreMessages) {
+        val recovered = if (eventThread == null || !eventThread.canAddMoreMessages || event.lastContactStatus === ContactStatus.Closed) {
             createThreadIfPossible()
         } else {
             eventThread.asCopyable().copy(
                 messages = event.messages.removeConversationStarter(),
-                threadState = if (event.agent != null) Ready else Loaded
+                threadState = event.threadState
             )
         }
         return recovered

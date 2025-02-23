@@ -19,6 +19,7 @@ import com.nice.cxonechat.AbstractChatTest
 import com.nice.cxonechat.Cancellable
 import com.nice.cxonechat.ChatThreadHandler
 import com.nice.cxonechat.internal.copy.ChatThreadCopyable.Companion.asCopyable
+import com.nice.cxonechat.model.makeAgent
 import com.nice.cxonechat.model.makeChatThread
 import com.nice.cxonechat.server.ServerResponse
 import com.nice.cxonechat.thread.ChatThread
@@ -36,7 +37,7 @@ internal class ChatThreadHandlerLiveChatTest : AbstractChatTest() {
         super.prepare()
 
         val threadId = UUID.randomUUID()
-        chatThread = makeChatThread(messages = listOf(), id = threadId)
+        chatThread = makeChatThread(messages = listOf(), id = threadId, threadAgent = null)
         thread = chat.threads().thread(chatThread)
     }
 
@@ -45,7 +46,19 @@ internal class ChatThreadHandlerLiveChatTest : AbstractChatTest() {
         val expected = chatThread.asCopyable().copy(positionInQueue = 10, hasOnlineAgent = true, contactId = TestContactId)
 
         val actual = testCallback(::get) {
-            sendServerMessage(ServerResponse.SetPositionInQueue(position = 10, isAgentAvailable = true))
+            sendServerMessage(ServerResponse.SetPositionInQueue(position = 10, isAgentAvailable = true, threadId = chatThread.id))
+        }
+
+        assertEquals(expected, actual.asCopyable().copy())
+    }
+
+    @Test
+    fun testPositionInQueueUpdateIsSkipped() {
+        val agent = makeAgent()
+        val expected = chatThread.asCopyable().copy(positionInQueue = null, hasOnlineAgent = true, contactId = TestContactId, threadAgent = agent.toAgent())
+        val actual = testCallback(::get) {
+            sendServerMessage(ServerResponse.CaseInboxAssigneeChanged(chatThread, agent, connection))
+            sendServerMessage(ServerResponse.SetPositionInQueue(position = 1, isAgentAvailable = true, threadId = chatThread.id))
         }
 
         assertEquals(expected, actual.asCopyable().copy())
