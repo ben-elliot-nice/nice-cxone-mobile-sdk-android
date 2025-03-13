@@ -115,7 +115,7 @@
     <string name="default_thread_name">Thread</string>
     <string name="video_preview_title">Video preview</string>
     <string name="preparing_sdk">Preparing SDK</string>
-    <string name="default_agent_name">Agent</string>
+    <string name="default_agent_name">Red</string>
     <string name="default_customer_name">Me</string>
     <string name="status_read">Read</string>
     <string name="status_received">Received</string>

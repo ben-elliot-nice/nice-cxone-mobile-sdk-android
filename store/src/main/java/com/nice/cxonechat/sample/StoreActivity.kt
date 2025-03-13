@@ -124,6 +124,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
                         "https://channels-de-na1.niceincontact.com/chat/"
                     ),
                     1092,
+//                    "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8"
                     "chat_8d08d328-771b-45d6-a9c9-520bf643710d"
                 )
             )

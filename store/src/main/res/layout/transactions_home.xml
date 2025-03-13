@@ -8,25 +8,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/westpac_home" />
+        android:src="@drawable/westpac_transaction" />
 
     <Button
-        android:id="@+id/transactions_button"
-        android:layout_width="match_parent"
-        android:layout_height="84dp"
+        android:id="@+id/case_button"
+        android:layout_width="360dp"
+        android:layout_height="156dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="-2dp"
-        android:layout_marginTop="384dp"
+        android:layout_marginTop="343dp"
         android:background="@android:color/transparent" />
 
-    <Button
-        android:id="@+id/contact_button"
-        android:layout_width="156dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="204dp"
-        android:layout_marginTop="-4dp"
-        android:background="@android:color/transparent" />
 </RelativeLayout>

@@ -74,6 +74,20 @@
         </activity>
 
         <activity
+            android:name=".TransactionsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_store_front"
+            android:theme="@style/StoreFrontTheme">
+        </activity>
+
+        <activity
+            android:name=".CaseActivity"
+            android:exported="true"
+            android:label="@string/title_activity_store_front"
+            android:theme="@style/StoreFrontTheme">
+        </activity>
+
+        <activity
             android:name="com.amazon.identity.auth.device.workflow.WorkflowActivity"
             android:allowTaskReparenting="true"
             android:exported="true"
