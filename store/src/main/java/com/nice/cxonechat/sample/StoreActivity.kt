@@ -110,7 +110,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
         val repo = storeViewModel.chatSettingsRepository.settings.value
         Log.e("StoreActivity", storeViewModel.chatSettingsRepository.settings.value.toString())
         Log.e("StoreActivity", repo?.sdkConfiguration?.channelId.toString())
-        if (repo == null || repo.sdkConfiguration?.channelId == "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8" || repo.sdkConfiguration?.channelId == "chat_9ce7718a-c7e6-4302-bb98-9cfb203f05e5") {
+        if (repo == null || repo.sdkConfiguration?.channelId == "chat_8d08d328-771b-45d6-a9c9-520bf643710d" || repo.sdkConfiguration?.channelId == "chat_9ce7718a-c7e6-4302-bb98-9cfb203f05e5") {
             Log.e("StoreActivity", "Triggered Settings Load")
             storeViewModel.chatSettingsHandler.setConfiguration(
                 SdkConfiguration(
@@ -125,7 +125,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
                     ),
                     1092,
 //                    "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8"
-                    "chat_8d08d328-771b-45d6-a9c9-520bf643710d"
+                    "chat_2686250d-1baf-4dcd-a29d-5f0744828321"
                 )
             )
 //                SdkConfiguration(

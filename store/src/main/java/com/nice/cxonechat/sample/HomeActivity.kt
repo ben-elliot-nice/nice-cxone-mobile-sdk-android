@@ -20,14 +20,6 @@ class HomeActivity : AppCompatActivity() {
 //        sharedPreferences.edit().clear().apply()
         Log.e("Debug", "After trying to remove shared preferences")
 
-
-        val transactionsButton: Button = findViewById(R.id.transactions_button)
-        transactionsButton.setOnClickListener {
-            Log.d("SIMPLE_ACTIVITY", "Invisible button clicked. Launching TransactionsActivity.")
-            val intent = Intent(this@HomeActivity, TransactionsActivity::class.java)
-            startActivity(intent)
-        }
-
         val contactButton: Button = findViewById(R.id.contact_button)
         contactButton.setOnClickListener {
             Log.d("SIMPLE_ACTIVITY", "Invisible button clicked. Launching StoreActivity.")
