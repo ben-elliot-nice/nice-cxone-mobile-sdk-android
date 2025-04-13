@@ -1,0 +1,43 @@
+{
+  "configurations": [
+    {
+      "name": "🤖 NA OAuth Test",
+      "environment": {
+        "name": "NA1",
+        "location": "North America",
+        "baseUrl": "https://channels-de-na1.niceincontact.com/",
+        "socketUrl": "wss://chat-gateway-de-na1.niceincontact.com",
+        "originHeader": "https://livechat-de-na1.niceincontact.com",
+        "chatUrl": "https://channels-de-na1.niceincontact.com/chat/"
+      },
+      "brandId": 1092,
+      "channelId": "chat_feea3166-7e08-47b8-8413-6d10ea71c04f"
+    },
+    {
+      "name": "ANZ Bank",
+      "environment": {
+        "name": "AU1",
+        "location": "Australia",
+        "baseUrl": "https://channels-de-au1.niceincontact.com/",
+        "socketUrl": "wss://chat-gateway-de-au1.niceincontact.com",
+        "originHeader": "https://livechat-de-au1.niceincontact.com",
+        "chatUrl": "https://channels-de-au1.niceincontact.com/"
+      },
+      "brandId": 1028,
+      "channelId": "chat_1c47aedf-2518-4e27-90e3-ead5c2f4f6fd"
+    },
+    {
+      "name": "🤖 Sales",
+      "environment": {
+        "name": "NA1",
+        "location": "North America",
+        "baseUrl": "https://channels-de-na1.niceincontact.com/",
+        "socketUrl": "wss://chat-gateway-de-na1.niceincontact.com",
+        "originHeader": "https://livechat-de-na1.niceincontact.com",
+        "chatUrl": "https://channels-de-na1.niceincontact.com/"
+      },
+      "brandId": 1386,
+      "channelId": "chat_71b74591-4659-4220-bb6b-4ad34f8078aa"
+    }
+  ]
+}
