@@ -2,20 +2,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Background Image -->
+    <!-- Background Image (scaled to fill the box exactly) -->
     <ImageView
         android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/optus_contact"
-        android:scaleType="centerCrop" />
+        android:scaleType="fitXY"
+        android:src="@drawable/sagov_home" />
 
-    <!-- Full-Screen Button -->
+    <!-- Full-Screen Transparent Button -->
+
+    <!-- Bottom Right Button with Image -->
     <Button
         android:id="@+id/fullscreen_button"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-3dp"
         android:background="@android:color/transparent" />
+
+    <ImageButton
+        android:id="@+id/bottom_right_button"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_red"
+        android:contentDescription="Bottom Right Action"
+        android:padding="10dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/tafesa_invite" />
 
 </RelativeLayout>

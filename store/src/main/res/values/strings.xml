@@ -14,8 +14,8 @@
   -->
 
 <resources>
-    <string name="app_name">MyOptus App</string>
-    <string name="title_activity_store_front">MyOptus App</string>
+    <string name="app_name">TAFE SA</string>
+    <string name="title_activity_store_front">TAFE SA</string>
     <string name="add_to_cart">Add to Cart</string>
     <string name="shopping_cart">Shopping Cart</string>
     <string name="continue_button">Continue</string>
@@ -41,7 +41,7 @@
     <string name="error_invalid_integer">Invalid Integer</string>
     <string name="error_invalid_color">Not a valid color</string>
 
-    <!-- UISettings Dialog Strings -->
+    <!-- UowerISettings Dialog Strings -->
     <string name="ui_settings">UI Settings</string>
     <string name="error_saving_settings">Error saving settings</string>
     <string name="unknown_error">Unknown Error</string>
