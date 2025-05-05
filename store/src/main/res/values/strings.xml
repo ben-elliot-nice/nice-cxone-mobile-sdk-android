@@ -14,8 +14,8 @@
   -->
 
 <resources>
-    <string name="app_name">TAFE SA</string>
-    <string name="title_activity_store_front">TAFE SA</string>
+    <string name="app_name">AXS (Demo)</string>
+    <string name="title_activity_store_front">AXS</string>
     <string name="add_to_cart">Add to Cart</string>
     <string name="shopping_cart">Shopping Cart</string>
     <string name="continue_button">Continue</string>
