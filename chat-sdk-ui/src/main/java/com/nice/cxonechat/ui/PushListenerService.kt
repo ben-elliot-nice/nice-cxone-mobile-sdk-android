@@ -19,6 +19,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -78,7 +79,8 @@ internal class PushListenerService : FirebaseMessagingService() {
         val iconResId = if (message.iconResId == 0) R.mipmap.ic_launcher else message.iconResId
 
         val notificationBuilder = Builder(this, channelId)
-            .setSmallIcon(iconResId)
+            .setSmallIcon(R.drawable.ic_stat_name)
+            .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher_foreground))
             .setContentTitle(message.title)
             .setContentText(message.message)
             .setAutoCancel(true)

@@ -20,6 +20,7 @@ import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.PickVisualMediaRequest
@@ -47,6 +48,10 @@ import com.nice.cxonechat.log.info
 import com.nice.cxonechat.log.scope
 import com.nice.cxonechat.sample.R.string
 import com.nice.cxonechat.sample.data.models.ChatAuthorization
+import com.nice.cxonechat.sample.data.models.ChatUserName
+import com.nice.cxonechat.sample.data.models.LoginData
+import com.nice.cxonechat.sample.data.models.SdkConfiguration
+import com.nice.cxonechat.sample.data.models.SdkEnvironment
 import com.nice.cxonechat.sample.ui.CartScreen
 import com.nice.cxonechat.sample.ui.ConfirmationScreen
 import com.nice.cxonechat.sample.ui.PaymentScreen
@@ -92,10 +97,38 @@ class StoreActivity : ComponentActivity(), UiStateContext {
     private val logger by lazy { LoggerScope(TAG, get()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i("DEBUG", "Starting oncreate in store activity")
         super.onCreate(savedInstanceState)
 
         if (VERSION.SDK_INT >= VERSION_CODES.S) {
             window.setHideOverlayWindows(true)
+        }
+
+        val repo = storeViewModel.chatSettingsRepository.settings.value
+        if (repo == null || repo.sdkConfiguration?.channelId == "chat_c30b80c7-f25c-4129-baeb-50c9d94ff6d8" || repo.sdkConfiguration?.channelId == "chat_9ce7718a-c7e6-4302-bb98-9cfb203f05e5") {
+            Log.e("StoreActivity", "Triggered Settings Load")
+//            storeViewModel.setLoginData(LoginData(
+//                ChatUserName("Example", "User"),
+//                "123ABC"
+//            ))
+            if (repo == null) {
+                Log.i("DEBUG", "Setting storeview chat settings")
+                storeViewModel.chatSettingsHandler.setConfiguration(
+                    SdkConfiguration(
+                        "BenE_MSDK",
+                        SdkEnvironment(
+                            "NA1",
+                            "North America",
+                            "https://channels-de-na1.niceincontact.com/",
+                            "wss://chat-gateway-de-na1.niceincontact.com",
+                            "https://livechat-de-na1.niceincontact.com",
+                            "https://channels-de-na1.niceincontact.com/chat/"
+                        ),
+                        1092,
+                        "chat_d98d729e-2905-493e-93ed-a8b72a82cbe5"
+                    )
+                )
+            }
         }
 
         setContent {
@@ -162,7 +195,7 @@ class StoreActivity : ComponentActivity(), UiStateContext {
         pickMedia.launch(PickVisualMediaRequest(ImageOnly))
     }
 
-    override fun loginWithAmazon() = logger.scope("loginWithAmazon") {
+        override fun loginWithAmazon() = logger.scope("loginWithAmazon") {
         val (codeVerifier, codeChallenge) = PKCE.generateCodeVerifier()
 
         requestContext.registerListener(LoggingAuthorizeListener(codeVerifier, storeViewModel, this))
